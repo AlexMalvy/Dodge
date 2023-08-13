@@ -1,0 +1,23 @@
+## Job ##
+Ma = Mage
+
+## Race ##
+Hu = Human
+De = Dark Elf
+Fe = Fallen Elf
+Gn = Gnome
+Li = Lizardkin
+Wi = Witch
+Dv = Devil
+Fa = Fairy
+Fo = Fomorian
+Go = Goblin
+Sk = Skeleton
+
+## Color ##
+Ba = Basic
+Gr = Grey
+Da = Dark
+Bl = Blue
+Re = Red
+Vi = Violet

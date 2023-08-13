@@ -1,0 +1,30 @@
+Kn - Sw - Hu - Bl _ N
+Job - Weapon - Race - Color _ State
+
+### Job ###
+Ma = Mage
+Kn = Knight
+
+### Weapons ###
+Sw = Sword
+Sp = Spear
+
+### Race ###
+Hu = Human
+Dw = Dwarf
+Fe = Fallen Elf
+Li = Lizardkin
+Wo = Wolfkin
+Ar = Living Armor
+Sk = Skeleton
+
+### Color ###
+Ba = Basic
+Re = Red
+Bl = Blue
+Go = Gold
+Gr = Gray
+
+### State ###
+N = Normal
+H = Hit
