@@ -2940,35 +2940,40 @@ class ranking:
         self.all_max_page = len(self.all)//10 + 1
 
     def update_mage(self):
-        temp_mage = game.ranking_list
-        number_of_ranked = len(temp_mage)
+        temp_mage = []
+        for each in self.all:
+            if each["best_time_mage"] > 0:
+                temp_mage.append(each)
         self.mage = []
-        while number_of_ranked != 0:
-            temp_selected = temp_mage[0]
+        number_of_ranked = len(temp_mage)
+        currently_selected = temp_mage[0]
+        while number_of_ranked > 0:
+            currently_selected = temp_mage[0]
             for entry in temp_mage:
-                print(self.all)
-                print("========")
-                if entry["best_time_mage"] > temp_selected["best_time_mage"]:
-                    temp_selected = entry
-            self.mage.append(temp_selected)
-            temp_mage.remove(temp_selected)
+                if entry["best_time_mage"] > currently_selected["best_time_mage"]:
+                    currently_selected = entry
+            self.mage.append(currently_selected)
+            temp_mage.remove(currently_selected)
             number_of_ranked = len(temp_mage)
         self.mage_max_page = len(self.mage)//10 + 1
 
     def update_knight(self):
-        knight_ranking = self.all
-        number_of_ranked = len(knight_ranking)
+        temp_knight = []
+        for each in self.all:
+            if each["best_time_knight"] > 0:
+                temp_knight.append(each)
         self.knight = []
-        while number_of_ranked != 0:
-            temp_selected = knight_ranking[0]
-            for entry in knight_ranking:
-                if entry["best_time_knight"] > temp_selected["best_time_knight"]:
-                    temp_selected = entry
-            self.knight.append(temp_selected)
-            knight_ranking.remove(temp_selected)
-            number_of_ranked = len(knight_ranking)
+        number_of_ranked = len(temp_knight)
+        currently_selected = temp_knight[0]
+        while number_of_ranked > 0:
+            currently_selected = temp_knight[0]
+            for entry in temp_knight:
+                if entry["best_time_knight"] > currently_selected["best_time_knight"]:
+                    currently_selected = entry
+            self.knight.append(currently_selected)
+            temp_knight.remove(currently_selected)
+            number_of_ranked = len(temp_knight)
         self.knight_max_page = len(self.knight)//10 + 1
-
 
 ranking = ranking()
 
@@ -3096,31 +3101,37 @@ def ranking_draw_window(job,page):
         number_text = font.render(f"{i + 1 + (page - 1) * 10}", 1, WHITE)
         screen.blit(number_text, (RK_COLUMN_NUMBER.centerx - number_text.get_width()//2, RK_COLUMN_NUMBER.y + 10 + i * 40))
     if job == "All":
-        for i in range(len(ranking.all)):
-            name_text = font.render(f"{ranking.all[i]['name']}", 1, WHITE)
-            screen.blit(name_text, (RK_COLUMN_NAME.centerx - name_text.get_width()//2, RK_COLUMN_NAME.y + 10 + i * 40))
-            time_text = font.render(f"{ranking.all[i]['time']:.2f}", 1, WHITE)
-            screen.blit(time_text, (RK_COLUMN_TIME.centerx - time_text.get_width()//2, RK_COLUMN_TIME.y + 10 + i * 40))
-            if f"{ranking.all[i]['job']}" == "Mage":
-                screen.blit(pygame.transform.scale(get_skin_img(f"{ranking.mage[i]['current_mage_skin']}"),(30,30)), (RK_COLUMN_SKIN.x + 10, RK_COLUMN_SKIN.y + 5 + i * 40))
-            elif f"{ranking.all[i]['job']}" == "Knight":
-                screen.blit(pygame.transform.scale(get_skin_img(f"{ranking.mage[i]['current_knight_skin']}"),(30,30)), (RK_COLUMN_SKIN.x + 10, RK_COLUMN_SKIN.y + 5 + i * 40))
+        offset = 0
+        for entry in ranking.all:
+            name_text = font.render(f"{entry['name']}", 1, WHITE)
+            screen.blit(name_text, (RK_COLUMN_NAME.centerx - name_text.get_width()//2, RK_COLUMN_NAME.y + 10 + offset * 40))
+            time_text = font.render(f"{entry['time']:.2f}", 1, WHITE)
+            screen.blit(time_text, (RK_COLUMN_TIME.centerx - time_text.get_width()//2, RK_COLUMN_TIME.y + 10 + offset * 40))
+            if f"{entry['job']}" == "Mage":
+                screen.blit(pygame.transform.scale(get_skin_img(f"{entry['current_mage_skin']}"),(30,30)), (RK_COLUMN_SKIN.x + 10, RK_COLUMN_SKIN.y + 5 + offset * 40))
+            elif f"{entry['job']}" == "Knight":
+                screen.blit(pygame.transform.scale(get_skin_img(f"{entry['current_knight_skin']}"),(30,30)), (RK_COLUMN_SKIN.x + 10, RK_COLUMN_SKIN.y + 5 + offset * 40))
             else:
-                screen.blit(pygame.transform.scale(get_skin_img(f"{ranking.mage[i]['current_mage_skin']}"),(30,30)), (RK_COLUMN_SKIN.x + 10, RK_COLUMN_SKIN.y + 5 + i * 40))
+                screen.blit(pygame.transform.scale(get_skin_img(f"{entry['current_mage_skin']}"),(30,30)), (RK_COLUMN_SKIN.x + 10, RK_COLUMN_SKIN.y + 5 + offset * 40))
+            offset += 1
     if job == "Mage":
-        for i in range(len(ranking.mage)):
-            name_text = font.render(f"{ranking.mage[i]['name']}", 1, WHITE)
-            screen.blit(name_text, (RK_COLUMN_NAME.centerx - name_text.get_width()//2, RK_COLUMN_NAME.y + 10 + i * 40))
-            time_text = font.render(f"{ranking.mage[i]['best_time_mage']:.2f}", 1, WHITE)
-            screen.blit(time_text, (RK_COLUMN_TIME.centerx - time_text.get_width()//2, RK_COLUMN_TIME.y + 10 + i * 40))
-            screen.blit(pygame.transform.scale(get_skin_img(f"{ranking.mage[i]['current_mage_skin']}"),(30,30)), (RK_COLUMN_SKIN.x + 10, RK_COLUMN_SKIN.y + 5 + i * 40))
+        offset = 0
+        for entry in ranking.mage:
+            name_text = font.render(f"{entry['name']}", 1, WHITE)
+            screen.blit(name_text, (RK_COLUMN_NAME.centerx - name_text.get_width()//2, RK_COLUMN_NAME.y + 10 + offset * 40))
+            time_text = font.render(f"{entry['best_time_mage']:.2f}", 1, WHITE)
+            screen.blit(time_text, (RK_COLUMN_TIME.centerx - time_text.get_width()//2, RK_COLUMN_TIME.y + 10 + offset * 40))
+            screen.blit(pygame.transform.scale(get_skin_img(f"{entry['current_mage_skin']}"),(30,30)), (RK_COLUMN_SKIN.x + 10, RK_COLUMN_SKIN.y + 5 + offset * 40))
+            offset += 1
     if job == "Knight":
-        for i in range(len(ranking.knight)):
-            name_text = font.render(f"{ranking.knight[i]['name']}", 1, WHITE)
-            screen.blit(name_text, (RK_COLUMN_NAME.centerx - name_text.get_width()//2, RK_COLUMN_NAME.y + 10 + i * 40))
-            time_text = font.render(f"{ranking.knight[i]['best_time_knight']:.2f}", 1, WHITE)
-            screen.blit(time_text, (RK_COLUMN_TIME.centerx - time_text.get_width()//2, RK_COLUMN_TIME.y + 10 + i * 40))
-            screen.blit(pygame.transform.scale(get_skin_img(f"{ranking.mage[i]['current_knight_skin']}"),(30,30)), (RK_COLUMN_SKIN.x + 10, RK_COLUMN_SKIN.y + 5 + i * 40))
+        offset = 0
+        for entry in ranking.knight:
+            name_text = font.render(f"{entry['name']}", 1, WHITE)
+            screen.blit(name_text, (RK_COLUMN_NAME.centerx - name_text.get_width()//2, RK_COLUMN_NAME.y + 10 + offset * 40))
+            time_text = font.render(f"{entry['best_time_knight']:.2f}", 1, WHITE)
+            screen.blit(time_text, (RK_COLUMN_TIME.centerx - time_text.get_width()//2, RK_COLUMN_TIME.y + 10 + offset * 40))
+            screen.blit(pygame.transform.scale(get_skin_img(f"{entry['current_knight_skin']}"),(30,30)), (RK_COLUMN_SKIN.x + 10, RK_COLUMN_SKIN.y + 5 + offset * 40))
+            offset += 1
 
 
     pygame.draw.rect(screen, RED, RK_STATS_RECT)
@@ -3179,10 +3190,10 @@ def ranking_draw_window(job,page):
 def ranking_screen():
     run = True
     click = False
-    job = "Mage"
+    job = "All"
     page = 1
     ranking.update()
-    max_page = ranking.mage_max_page
+    max_page = ranking.all_max_page
     while run:
         clock.tick(60)
         mx, my = pygame.mouse.get_pos()
