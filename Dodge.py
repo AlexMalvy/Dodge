@@ -219,9 +219,9 @@ CHANGE_JOB_BUTTON = pygame.Rect(WIDTH//2 - 225, HEIGHT - 50, 150, 42)
 RETRY_BUTTON = pygame.Rect(WIDTH//2 + 75, HEIGHT - 50, 150, 42)
 
 # Quest
-Q1_EMPLACEMENT = pygame.Rect(10, HEIGHT/3, 300, 50)
-Q2_EMPLACEMENT = pygame.Rect(10, HEIGHT/3 + 70, 300, 50)
-Q3_EMPLACEMENT = pygame.Rect(10, HEIGHT/3 + 140, 300, 50)
+Q1_EMPLACEMENT = pygame.Rect(10, HEIGHT/3 - 30, 300, 50)
+Q2_EMPLACEMENT = pygame.Rect(10, HEIGHT/3 - 30 + 70, 300, 50)
+Q3_EMPLACEMENT = pygame.Rect(10, HEIGHT/3 - 30 + 140, 300, 50)
 
 # Ranking End Screen
 RANKING_INDEX_HEAD = pygame.Rect(WIDTH//3 - 6 - 25, HEIGHT//2, 50, 30)
@@ -235,7 +235,7 @@ RANKING_TIME_COLUMN = pygame.Rect(WIDTH//3 + WIDTH//9 + 25, HEIGHT//2 + 35, WIDT
 RANKING_JOB_COLUMN = pygame.Rect(WIDTH//3 + WIDTH//9 * 2 + 3 + 25, HEIGHT//2 + 35, WIDTH//9, 175)
 
 # Gold Recap
-GAME_OVER_GOLD_RECAP = pygame.Rect(10, HEIGHT//3 + 250, 300, 150)
+GAME_OVER_GOLD_RECAP = pygame.Rect(10, HEIGHT//3 + 230, 300, 150)
 GAME_OVER_GOLD_DIV = pygame.Rect(11, GAME_OVER_GOLD_RECAP.bottom - 41, 298, 2)
 
 
@@ -1495,7 +1495,7 @@ def game_over_draw_window():
         player_rank_job_text = font.render(f"{game.player_best_time_job}", 1, GREEN)
         screen.blit(player_rank_job_text, (RANKING_JOB_COLUMN.centerx - player_rank_job_text.get_width()//2, RANKING_JOB_COLUMN.y + 145))
 
-    ##
+
     gold_title_text = big_font.render("Gold :", 1, WHITE)
     screen.blit(gold_title_text, (15, GAME_OVER_GOLD_RECAP.y - gold_title_text.get_height() - 10))
 
@@ -1525,7 +1525,6 @@ def game_over_draw_window():
 
     screen.blit(COIN_IMG, (GAME_OVER_GOLD_RECAP.right - COIN_IMG.get_width() - 5, GAME_OVER_GOLD_RECAP.bottom - COIN_IMG.get_height() - 5))
 
-    ##
 
     pygame.draw.rect(screen, BLACK, JOB_ICON_EMPLACEMENT_GO)
     if player.job == "Mage":
@@ -3183,6 +3182,7 @@ def ranking_screen():
     job = "Mage"
     page = 1
     ranking.update()
+    max_page = ranking.mage_max_page
     while run:
         clock.tick(60)
         mx, my = pygame.mouse.get_pos()
@@ -3190,26 +3190,36 @@ def ranking_screen():
         if RK_JOB1_BUTTON.collidepoint((mx,my)) and click:
             page = 1
             job = "Mage"
+            max_page = ranking.mage_max_page
             
         if RK_JOB2_BUTTON.collidepoint((mx,my)) and click:
             page = 1
             job = "Knight"
+            max_page = ranking.knight_max_page
             
         if RK_JOB3_BUTTON.collidepoint((mx,my)) and click:
             page = 1
             job = "Job3"
+            max_page = 1
             
         if RK_JOB4_BUTTON.collidepoint((mx,my)) and click:
             page = 1
             job = "Job4"
+            max_page = 1
 
+        if RK_ARROW_UP_BUTTON.collidepoint((mx,my)) and click:
+            pass
+
+        if RK_ARROW_DOWN_BUTTON.collidepoint((mx,my)) and click:
+            pass
             
         if RK_ARROW_LEFT_BUTTON.collidepoint((mx,my)) and click:
             if page > 1:
                 page -= 1
             
         if RK_ARROW_RIGHT_BUTTON.collidepoint((mx,my)) and click:
-            page += 1
+            if page < max_page:
+                page += 1
 
             
         if BACK_BUTTON_B_LEFT.collidepoint((mx,my)) and click:
@@ -3226,6 +3236,8 @@ def ranking_screen():
                     click = True
                 if event.button == 3:
                     job = "All"
+                    page = 1
+                    max_page = ranking.all_max_page
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     run = False
