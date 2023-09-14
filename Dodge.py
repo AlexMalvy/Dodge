@@ -234,6 +234,10 @@ RANKING_NAME_COLUMN = pygame.Rect(WIDTH//3 - 3 + 25, HEIGHT//2 + 35, WIDTH//9, 1
 RANKING_TIME_COLUMN = pygame.Rect(WIDTH//3 + WIDTH//9 + 25, HEIGHT//2 + 35, WIDTH//9, 175)
 RANKING_JOB_COLUMN = pygame.Rect(WIDTH//3 + WIDTH//9 * 2 + 3 + 25, HEIGHT//2 + 35, WIDTH//9, 175)
 
+# Gold Recap
+GAME_OVER_GOLD_RECAP = pygame.Rect(10, HEIGHT//3 + 250, 300, 150)
+GAME_OVER_GOLD_DIV = pygame.Rect(11, GAME_OVER_GOLD_RECAP.bottom - 41, 298, 2)
+
 
 ### Image ##
 
@@ -1131,12 +1135,17 @@ def main_game():
             game.timer = time.time() - game.start_timer
             check_best_timer()
 
+            # Go Left
             if left and stomp == False and player.charge == False:
                 if player.player_ch.x > 0:
                     player.player_ch.x -= player.speed * player.speed_multiplier
+
+            # Go Right
             if right and stomp == False and player.charge == False:
                 if player.player_ch.right < LIMIT.left:
                     player.player_ch.x += player.speed * player.speed_multiplier
+
+            # Specials
             if special or (jump and player.double_jump == False and stomp == False and player.special_type == "Slowfall"):
                 if player.special_type == "Slowfall":
                     if player.jump_velocity < 0:
@@ -1152,11 +1161,14 @@ def main_game():
                         player.shield_up = True
             else:
                 player.slowfall = False
+
+            # Stomp
             if down:
                 if player.ground == False:
                     player.jump_velocity = -(player.jump_power * 2.5)
                     stomp = True
 
+            # Jumping and double jump
             if jump and player.ground:
                 player.jump_velocity = player.jump_power
                 player.ground = False
@@ -1165,10 +1177,12 @@ def main_game():
                 player.double_jump = False
                 animations.list.append({"type" : "double_jump", "x" : player.player_ch.x, "y" : player.player_ch.centery, "max_frame" : 8, "current_frame" : 0})
 
+            # Falling
             if player.ground == False and player.charge == False:
                 player.player_ch.y -= player.jump_velocity * player.jump_velocity_multiplier
                 player.jump_velocity -= 0.5 * player.jump_velocity_multiplier
 
+            # Touch ground
             if player.player_ch.colliderect(GROUND):
                 player.jump_velocity = 0
                 player.ground = True
@@ -1178,12 +1192,14 @@ def main_game():
                 stomp = False
                 player.double_jump = True
 
+            # Mage dash preview update (Can probably move it elsewhere)
             if time.time() - player.dash_timer >= player.dash_cd:
                 player.dash_phantom.x = player.player_ch.x + player.dash_power
                 if player.dash_phantom.right > LIMIT.x:
                     player.dash_phantom.x = LIMIT.x - player.dash_phantom.width
                 player.dash_phantom.y = player.player_ch.y
 
+            # Dash Logic
             if dash:
                 if time.time() - player.dash_timer >= player.dash_cd:
                     if player.dash_type == "Warp":
@@ -1202,27 +1218,32 @@ def main_game():
                         if player.charge_end > LIMIT.x:
                             player.charge_end = LIMIT.x - player.player_ch.width - 5
 
+            # Knight Dash logic (need to fix endless dash)
             if player.charge:
                 player.player_ch.x += player.dash_power//25
-                if player.player_ch.x >= player.charge_end:
+                if player.player_ch.x >= player.charge_end or time.time() - player.dash_timer >= 1:
                     player.charge = False
                 if player.player_ch.right >= LIMIT.x:
                     player.player_ch.right = LIMIT.x
 
+            # i-frame logic
             if player.i_frame:
                 if time.time() - player.i_frame_timer >= player.i_frame_duration:
                     player.i_frame = False
 
+            # Knight active logic
             if player.shield_up:
                 if time.time() - player.special_timer >= player.special_duration:
                     player.shield_up = False
                     player.immune = False
 
+            # Knight immunity reset (failsafe)
             if player.shield_up == False and player.charge == False:
                 player.immune = False
 
             check_collision()
 
+            # Game over processing / saving
             if player.hp <= 0:
                 game.game_over = True
                 rank_award()
@@ -1248,37 +1269,45 @@ def main_game():
                 with open("dodge_save.txt", "wb") as f:
                     pickle.dump(game.ranking_list, f)
 
+            # Projectiles spawner
             if time.time() - projectile.projectile_timer >= projectile.projectile_frequency:
                 projectile.projectile_timer = time.time()
                 projectile_logic()
             
+            # Healing item generator
             if time.time() - projectile.heal_timer >= projectile.heal_cd:
                 projectile.heal_timer = time.time()
                 generate_health_pick_up()
-                
+
+            # Coin generator    
             if time.time() - projectile.coin_timer >= projectile.projectile_frequency * 3:
                 projectile.coin_timer = time.time()
                 generate_coins()
 
 
             update_all_projectile()
+
+            # reset
             player.jump_velocity_multiplier = 1
             dash = False
             if player.double_jump:
                 jump = False
 
 
-
+        # Restart button
         if (RESTART_BUTTON.collidepoint((mx,my)) and click) or game.restart:
             restart_game()
-            
+
+        # Game over trigger    
         if game.game_over and animations.list == []:
             game_over()
 
+        # Ranking logic
         reorder_ranking()
         get_ranking_info()
 
 
+        # Event handler
         click = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -1466,10 +1495,38 @@ def game_over_draw_window():
         player_rank_job_text = font.render(f"{game.player_best_time_job}", 1, GREEN)
         screen.blit(player_rank_job_text, (RANKING_JOB_COLUMN.centerx - player_rank_job_text.get_width()//2, RANKING_JOB_COLUMN.y + 145))
 
-    gold_earned_text = font.render(f"{game.player_old_gold} + {game.run_gold} + {quest_database.quest_reward} ==> {player.gold}", 1, YELLOW)
-    screen.blit(COIN_IMG, (WIDTH/2 + 10 + gold_earned_text.get_width()/2, RANKING_TIME_COLUMN.bottom + 18))
-    screen.blit(gold_earned_text, (WIDTH/2 - gold_earned_text.get_width()/2, RANKING_TIME_COLUMN.bottom + 22))
-            
+    ##
+    gold_title_text = big_font.render("Gold :", 1, WHITE)
+    screen.blit(gold_title_text, (15, GAME_OVER_GOLD_RECAP.y - gold_title_text.get_height() - 10))
+
+    pygame.draw.rect(screen, RED, GAME_OVER_GOLD_RECAP)
+    screen.blit(pygame.transform.scale(PANEL_IMG, (GAME_OVER_GOLD_RECAP.w - 2, GAME_OVER_GOLD_RECAP.h - 2)), (GAME_OVER_GOLD_RECAP.x + 1, GAME_OVER_GOLD_RECAP.y + 1))
+    pygame.draw.rect(screen, GRAY, GAME_OVER_GOLD_DIV)
+
+    old_gold_text = small_font.render(f"Old gold :", 1, WHITE)
+    screen.blit(old_gold_text, (GAME_OVER_GOLD_RECAP.x + 5, GAME_OVER_GOLD_RECAP.y + 15))
+    old_gold_text_2 = small_font.render(f"{game.player_old_gold}", 1, WHITE)
+    screen.blit(old_gold_text_2, (GAME_OVER_GOLD_RECAP.right - COIN_IMG.get_width() - old_gold_text_2.get_width() - 10, GAME_OVER_GOLD_RECAP.y + 15))
+
+    run_gold_text = small_font.render(f"Collected gold :", 1, WHITE)
+    screen.blit(run_gold_text, (GAME_OVER_GOLD_RECAP.x + 5, GAME_OVER_GOLD_RECAP.y + 45))
+    run_gold_text_2 = small_font.render(f"+ {game.run_gold}", 1, WHITE)
+    screen.blit(run_gold_text_2, (GAME_OVER_GOLD_RECAP.right - COIN_IMG.get_width() - run_gold_text_2.get_width() - 10, GAME_OVER_GOLD_RECAP.y + 45))
+
+    quest_gold_text = small_font.render(f"Quest gold :", 1, WHITE)
+    screen.blit(quest_gold_text, (GAME_OVER_GOLD_RECAP.x + 5, GAME_OVER_GOLD_RECAP.y + 75))
+    quest_gold_text_2 = small_font.render(f"+ {quest_database.quest_reward}", 1, WHITE)
+    screen.blit(quest_gold_text_2, (GAME_OVER_GOLD_RECAP.right - COIN_IMG.get_width() - quest_gold_text_2.get_width() - 10, GAME_OVER_GOLD_RECAP.y + 75))
+
+    total_gold_text_1 = small_font.render(f"Total gold :", 1, WHITE)
+    screen.blit(total_gold_text_1, (GAME_OVER_GOLD_RECAP.x + 5, GAME_OVER_GOLD_DIV.y + 5 + total_gold_text_1.get_height()//2))
+    total_gold_text_2 = small_font.render(f"{player.gold}", 1, WHITE)
+    screen.blit(total_gold_text_2, (GAME_OVER_GOLD_RECAP.right - COIN_IMG.get_width() - total_gold_text_2.get_width() - 10, GAME_OVER_GOLD_DIV.y + 5 + total_gold_text_2.get_height()//2))
+
+    screen.blit(COIN_IMG, (GAME_OVER_GOLD_RECAP.right - COIN_IMG.get_width() - 5, GAME_OVER_GOLD_RECAP.bottom - COIN_IMG.get_height() - 5))
+
+    ##
+
     pygame.draw.rect(screen, BLACK, JOB_ICON_EMPLACEMENT_GO)
     if player.job == "Mage":
         screen.blit(MAGE_ICON, (JOB_ICON_EMPLACEMENT_GO.x + 1, JOB_ICON_EMPLACEMENT_GO.y + 1))
