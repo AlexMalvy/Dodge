@@ -3152,7 +3152,7 @@ def ranking_draw_window(job,page):
         best_time = font.render(f"Best time : None", 1, WHITE)
     screen.blit(best_time, (RK_STATS_RECT.x + 10, RK_STATS_RECT.y + 100))
 
-    # Number of Run/ Gold coins collected
+    # Number of Run/ Gold coins collected (To be changed)
     active_text = font.render(f"Active : {player.special_type}", 1, WHITE)
     screen.blit(active_text, (RK_STATS_RECT.x + 10, RK_STATS_RECT.y + 140))
     active_desc = small_font.render(f"{player.special_desc_1}", 1, WHITE)
