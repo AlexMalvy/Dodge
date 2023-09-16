@@ -5,6 +5,7 @@ import random
 import os
 import sys
 import pickle
+import math
 from pygame.locals import *
 
 WIDTH, HEIGHT = 1200, 650
@@ -242,24 +243,24 @@ GAME_OVER_GOLD_DIV = pygame.Rect(11, GAME_OVER_GOLD_RECAP.bottom - 41, 298, 2)
 ### Image ##
 
 # Background
-BACKGROUND_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "background.bmp")),(WIDTH, HEIGHT))
-BG_STARS_1 = pygame.image.load(os.path.join("Assets_dodge", "bg_stars_1.jpg"))
-BG_STARS_2 = pygame.image.load(os.path.join("Assets_dodge", "bg_stars_2.jpg"))
-BG_STARS_3 = pygame.image.load(os.path.join("Assets_dodge", "bg_stars_3.jpg"))
-BG_GRAY_WALL = pygame.image.load(os.path.join("Assets_dodge", "bg_gray_wall.jpg"))
-BG_DUNGEON = pygame.image.load(os.path.join("Assets_dodge", "bg_dungeon.jpg"))
+BACKGROUND_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("background", "background.bmp"))),(WIDTH, HEIGHT))
+BG_STARS_1 = pygame.image.load(os.path.join("Assets_dodge", os.path.join("background", "bg_stars_1.jpg")))
+BG_STARS_2 = pygame.image.load(os.path.join("Assets_dodge", os.path.join("background", "bg_stars_2.jpg")))
+BG_STARS_3 = pygame.image.load(os.path.join("Assets_dodge", os.path.join("background", "bg_stars_3.jpg")))
+BG_GRAY_WALL = pygame.image.load(os.path.join("Assets_dodge", os.path.join("background", "bg_gray_wall.jpg")))
+BG_DUNGEON = pygame.image.load(os.path.join("Assets_dodge", os.path.join("background", "bg_dungeon.jpg")))
 
 # Panels
-PANEL_IMG = pygame.image.load(os.path.join("Assets_dodge", "Panel.png"))
-PANEL_2_IMG = pygame.image.load(os.path.join("Assets_dodge", "Panel_2.png"))
+PANEL_IMG = pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "Panel.png")))
+PANEL_2_IMG = pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "Panel_2.png")))
 
-ARROW_IMG = pygame.image.load(os.path.join("Assets_dodge", "arrow.png"))
+ARROW_IMG = pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "arrow.png")))
 
 # Player Characters
-PLAYER_IMG = pygame.transform.flip((pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "player.png")),(40, 40))),1,0)
-PLAYER_HIT_IMG = pygame.transform.flip(pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "player_hit.png")),(40, 40)),1,0)
+PLAYER_IMG = pygame.transform.flip((pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "player.png"))),(40, 40))),1,0)
+PLAYER_HIT_IMG = pygame.transform.flip(pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "player_hit.png"))),(40, 40)),1,0)
 
-PLAYER_DEAD_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "player_dead.png")),(40, 40))
+PLAYER_DEAD_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "player_dead.png"))),(40, 40))
 
 # Mage
 MaHuRe_N_IMG = pygame.transform.flip((pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("mage_skin", "MaHuRe_N.png"))),(40, 40))),1,0)
@@ -361,92 +362,110 @@ KnMaDwBl_N_IMG = pygame.transform.flip((pygame.transform.scale(pygame.image.load
 KnMaDwBl_H_IMG = pygame.transform.flip((pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("knight_skin", "KnMaDwBl_H.png"))),(40, 40))),1,0)
 
 
+# Dragon
+Dragon_N_IMG = pygame.transform.flip((pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("dragon_skin", "Dragon_N.png"))),(40, 40))),1,0)
+Dragon_H_IMG = pygame.transform.flip((pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("dragon_skin", "Dragon_H.png"))),(40, 40))),1,0)
+
+
 # Job Icons
-MAGE_ICON = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "mage_icon.png")),(40, 40))
-KNIGHT_ICON = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "knight_icon.png")),(40, 40))
+MAGE_ICON = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("mage_skin", "mage_icon.png"))),(40, 40))
+KNIGHT_ICON = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("knight_skin", "knight_icon.png"))),(40, 40))
+DRAGON_ICON = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("dragon_skin", "dragon_icon.png"))),(40, 40))
 
 ## Abilities Icons/VFX
 
 # Stomp (All)
-STOMP_FX_1 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "stomp_fx_1.png")),(40, 40))
-STOMP_FX_2 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "stomp_fx_2.png")),(40, 40))
-STOMP_FX_3 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "stomp_fx_3.png")),(40, 40))
+STOMP_FX_1 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "stomp_fx_1.png"))),(40, 40))
+STOMP_FX_2 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "stomp_fx_2.png"))),(40, 40))
+STOMP_FX_3 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "stomp_fx_3.png"))),(40, 40))
 
 # Double Jump (All)
-DOUBLE_JUMP_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "double_jump.png")),(40, 40))
-DOUBLE_JUMP_CD_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "double_jump_cd.png")),(40, 40))
+DOUBLE_JUMP_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "double_jump.png"))),(40, 40))
+DOUBLE_JUMP_CD_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "double_jump_cd.png"))),(40, 40))
 
-DOUBLE_JUMP_FX_1 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "double_jump_fx_1.png")),(40, 40))
-DOUBLE_JUMP_FX_2 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "double_jump_fx_2.png")),(40, 40))
+DOUBLE_JUMP_FX_1 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "double_jump_fx_1.png"))),(40, 40))
+DOUBLE_JUMP_FX_2 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "double_jump_fx_2.png"))),(40, 40))
 
 # Dash (Mage)
-DASH_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "dash.png")),(40, 40))
-DASH_CD_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "dash_cd.png")),(40, 40))
+DASH_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("mage_skin", "dash.png"))),(40, 40))
+DASH_CD_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("mage_skin", "dash_cd.png"))),(40, 40))
 
-DASH_PHANTOM_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "dash_phantom.png")),(40, 40))
+DASH_PHANTOM_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("mage_skin", "dash_phantom.png"))),(40, 40))
 
-DASH_FX_1 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "dash_fx_1.png")),(40, 40))
-DASH_FX_2 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "dash_fx_2.png")),(40, 40))
-DASH_FX_3 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "dash_fx_3.png")),(40, 40))
-DASH_FX_4 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "dash_fx_4.png")),(40, 40))
+DASH_FX_1 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("mage_skin", "dash_fx_1.png"))),(40, 40))
+DASH_FX_2 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("mage_skin", "dash_fx_2.png"))),(40, 40))
+DASH_FX_3 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("mage_skin", "dash_fx_3.png"))),(40, 40))
+DASH_FX_4 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("mage_skin", "dash_fx_4.png"))),(40, 40))
 
 # Slow Fall (Mage)
-SLOWFALL_ON_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "slowfall_on.png")),(40, 40))
-SLOWFALL_OFF_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "slowfall_off.png")),(40, 40))
+SLOWFALL_ON_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("mage_skin", "slowfall_on.png"))),(40, 40))
+SLOWFALL_OFF_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("mage_skin", "slowfall_off.png"))),(40, 40))
 
-SLOWFALL_FX = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "slowfall_fx.png")),(40, 20))
+SLOWFALL_FX = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("mage_skin", "slowfall_fx.png"))),(40, 20))
 
 # Charge (Knight)
-CHARGE_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "charge.png")),(40, 40))
-CHARGE_ON_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "charge_on.png")),(40, 40))
-CHARGE_CD_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "charge_cd.png")),(40, 40))
+CHARGE_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("knight_skin", "charge.png"))),(40, 40))
+CHARGE_ON_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("knight_skin", "charge_on.png"))),(40, 40))
+CHARGE_CD_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("knight_skin", "charge_cd.png"))),(40, 40))
 
 # Shield Up (Knight)
-SHIELD_UP_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "shield_up.png")),(40, 40))
-SHIELD_UP_ON_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "shield_up_on.png")),(40, 40))
-SHIELD_UP_CD_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "shield_up_cd.png")),(40, 40))
+SHIELD_UP_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("knight_skin", "shield_up.png"))),(40, 40))
+SHIELD_UP_ON_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("knight_skin", "shield_up_on.png"))),(40, 40))
+SHIELD_UP_CD_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("knight_skin", "shield_up_cd.png"))),(40, 40))
 
-SHIELD_UP_FX = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "shield_up_fx.png")),(40, 40))
+SHIELD_UP_FX = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("knight_skin", "shield_up_fx.png"))),(40, 40))
+
+# Flight (Dragon)
+FLIGHT_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("dragon_skin", "flight.png"))),(40, 40))
+FLIGHT_CD_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("dragon_skin", "flight_cd.png"))),(40, 40))
+
+# Soar (Dragon)
+SOAR_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("dragon_skin", "soar.png"))),(40, 40))
+SOAR_CD_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("dragon_skin", "soar_cd.png"))),(40, 40))
+
+# Shield Up (Dragon)
+ROAR_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("dragon_skin", "roar.png"))),(40, 40))
+ROAR_CD_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("dragon_skin", "roar_cd.png"))),(40, 40))
 
 
 ## Game img / VFX
 
 # Bullets / Pick Ups
-BULLET_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "bullet.png")),(25, 10))
-GROUND_BULLET_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "barrel.png")),(40, 40))
-HEALTH_PICK_UP_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "health_pick_up.png")),(30, 30))
-COIN_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "coin.png")),(30, 30))
+BULLET_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "bullet.png"))),(25, 10))
+GROUND_BULLET_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "barrel.png"))),(40, 40))
+HEALTH_PICK_UP_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "health_pick_up.png"))),(30, 30))
+COIN_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "coin.png"))),(30, 30))
 
 # Damage
-DMG_1_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "dmg_1.png")),(60, 60))
-DMG_2_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "dmg_2.png")),(60, 60))
+DMG_1_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "dmg_1.png"))),(60, 60))
+DMG_2_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "dmg_2.png"))),(60, 60))
 
 # Heal
-HEAL_FX_1 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "heal_fx_1.png")),(50, 50))
-HEAL_FX_2 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "heal_fx_2.png")),(50, 50))
-HEAL_FX_3 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "heal_fx_3.png")),(50, 50))
+HEAL_FX_1 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "heal_fx_1.png"))),(50, 50))
+HEAL_FX_2 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "heal_fx_2.png"))),(50, 50))
+HEAL_FX_3 = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "heal_fx_3.png"))),(50, 50))
 
 
 ### Misc
 
 # Health Indicator
-HEART_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "heart.png")),(50, 50))
-HEART_EMPTY_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "heart_empty.png")),(50, 50))
+HEART_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "heart.png"))),(50, 50))
+HEART_EMPTY_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "heart_empty.png"))),(50, 50))
 
 # Rank
-RANK_1_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "rank_1.png")),(70, 70))
-RANK_2_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "rank_2.png")),(70, 70))
-RANK_3_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "rank_3.png")),(70, 70))
-RANK_4_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "rank_4.png")),(70, 70))
-RANK_5_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "rank_5.png")),(70, 70))
-RANK_6_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "rank_6.png")),(70, 70))
-RANK_7_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "rank_7.png")),(70, 70))
+RANK_1_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("rank", "rank_1.png"))),(70, 70))
+RANK_2_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("rank", "rank_2.png"))),(70, 70))
+RANK_3_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("rank", "rank_3.png"))),(70, 70))
+RANK_4_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("rank", "rank_4.png"))),(70, 70))
+RANK_5_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("rank", "rank_5.png"))),(70, 70))
+RANK_6_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("rank", "rank_6.png"))),(70, 70))
+RANK_7_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("rank", "rank_7.png"))),(70, 70))
 
 # Name Entry Panel (scaled)
-NAME_ENTRY_OFF = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "Panel.png")),(NAME_ENTRY.width - 2, NAME_ENTRY.height - 2))
-NAME_ENTRY_ON = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "Panel_2.png")),(NAME_ENTRY.width - 2, NAME_ENTRY.height - 2))
+NAME_ENTRY_OFF = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "Panel.png"))),(NAME_ENTRY.width - 2, NAME_ENTRY.height - 2))
+NAME_ENTRY_ON = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "Panel_2.png"))),(NAME_ENTRY.width - 2, NAME_ENTRY.height - 2))
 
-LIMIT_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", "limit.png")),(LIMIT.width, LIMIT.height))
+LIMIT_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("general", "limit.png"))),(LIMIT.width, LIMIT.height))
 
 ###################
 ###################
@@ -482,6 +501,7 @@ class player:
     job = "Mage"
     best_time_mage = 0
     best_time_knight = 0
+    best_time_dragon = 0
 
     rank = 0
     rank_name = "Unranked"
@@ -525,15 +545,24 @@ class player:
     dash_phantom = pygame.Rect(0, 0, 40, 40)
     charge = False
     charge_end = 0
+    endurance = 100
+    grounded = True
+    grounded_timer = 0
+    soar = False
+    roar_radius = 150
 
     skin_mage_list = ["MaHuRe"]
     skin_knight_list = ["KnSpHuBl"]
+    skin_dragon_list = ["Dragon"]
     current_mage_skin_name = "MaHuRe"
     mage_skin = MaHuRe_N_IMG
     mage_skin_hit = MaHuRe_H_IMG
     current_knight_skin_name = "KnSpHuBl"
     knight_skin = KnSpHuBl_N_IMG
     knight_skin_hit = KnSpHuBl_H_IMG
+    current_dragon_skin_name = "Dragon"
+    dragon_skin = Dragon_N_IMG
+    dragon_skin_hit = Dragon_H_IMG
 
 class projectile:
     list = []
@@ -571,6 +600,16 @@ def switch_job():
         player.special_timer = 0
         player.special_duration = 1
         player.special_cd = 10
+    if player.job == "Dragon":
+        player.dash_type = "Soar"
+        player.dash_desc_1 = "desc_1"
+        player.dash_desc_2 = "desc_2"
+        player.dash_cd = 5
+        player.dash_power = 30
+        player.special_type = "Roar"
+        player.special_desc_1 = "desc_1"
+        player.special_desc_2 = "desc_2"
+        player.special_cd = 12
 
 def generate_projectile_basic():
     amount = random.randint(2, 5)
@@ -963,6 +1002,7 @@ def restart_game():
     player.special_timer = 0
     player.i_frame = False
     player.ground = False
+    player.endurance = 100
     projectile.list = []
     game.run_gold = 0
     quest_database.quest_reward = 0
@@ -1047,9 +1087,38 @@ def main_game_draw_window():
             screen.blit(CHARGE_CD_IMG, (DASH_EMPLACEMENT.x + 1, DASH_EMPLACEMENT.y + 1))
             dash_cd_text = font.render(f"{(player.dash_timer + player.dash_cd - time.time()):.1f}", 1, WHITE)
             screen.blit(dash_cd_text, (DASH_EMPLACEMENT.centerx - dash_cd_text.get_width()//2, DASH_EMPLACEMENT.centery - dash_cd_text.get_height()//2))
+    if player.job == "Dragon":
+        if time.time() - player.dash_timer >= player.dash_cd:
+            screen.blit(SOAR_IMG, (DASH_EMPLACEMENT.x + 1, DASH_EMPLACEMENT.y + 1))
+        else:
+            screen.blit(SOAR_CD_IMG, (DASH_EMPLACEMENT.x + 1, DASH_EMPLACEMENT.y + 1))
+            dash_cd_text = font.render(f"{(player.dash_timer + player.dash_cd - time.time()):.1f}", 1, WHITE)
+            screen.blit(dash_cd_text, (DASH_EMPLACEMENT.centerx - dash_cd_text.get_width()//2, DASH_EMPLACEMENT.centery - dash_cd_text.get_height()//2))
 
     pygame.draw.rect(screen, BLACK, DOUBLE_JUMP_EMPLACEMENT)
-    if player.double_jump:
+    if player.job == "Dragon":
+        if player.endurance >= 25:
+            pygame.draw.rect(screen, YELLOW, (player.player_ch.x - 10, player.player_ch.y, 5, 5))
+            screen.blit(FLIGHT_IMG, (DOUBLE_JUMP_EMPLACEMENT.x + 1, DOUBLE_JUMP_EMPLACEMENT.y + 1))
+            remaining_charge_text = font.render(f"1", 1, WHITE)
+        if player.endurance >= 50:
+            pygame.draw.rect(screen, YELLOW, (player.player_ch.x - 10, player.player_ch.y + 10, 5, 5))
+            screen.blit(FLIGHT_IMG, (DOUBLE_JUMP_EMPLACEMENT.x + 1, DOUBLE_JUMP_EMPLACEMENT.y + 1))
+            remaining_charge_text = font.render(f"2", 1, WHITE)
+        if player.endurance >= 75:
+            pygame.draw.rect(screen, YELLOW, (player.player_ch.x - 10, player.player_ch.y + 20, 5, 5))
+            screen.blit(FLIGHT_IMG, (DOUBLE_JUMP_EMPLACEMENT.x + 1, DOUBLE_JUMP_EMPLACEMENT.y + 1))
+            remaining_charge_text = font.render(f"3", 1, WHITE)
+        if player.endurance >= 100:
+            pygame.draw.rect(screen, YELLOW, (player.player_ch.x - 10, player.player_ch.y + 30, 5, 5))
+            screen.blit(FLIGHT_IMG, (DOUBLE_JUMP_EMPLACEMENT.x + 1, DOUBLE_JUMP_EMPLACEMENT.y + 1))
+            remaining_charge_text = font.render(f"4", 1, WHITE)
+        elif player.endurance < 25:
+            screen.blit(FLIGHT_CD_IMG, (DOUBLE_JUMP_EMPLACEMENT.x + 1, DOUBLE_JUMP_EMPLACEMENT.y + 1))
+            remaining_charge_text = font.render(f"0", 1, WHITE)
+        screen.blit(remaining_charge_text, (DOUBLE_JUMP_EMPLACEMENT.centerx - remaining_charge_text.get_width()//2, DOUBLE_JUMP_EMPLACEMENT.centery - remaining_charge_text.get_height()//2))
+        pygame.draw.circle(screen, RED, player.player_ch.center, player.roar_radius, 1)
+    elif player.double_jump:
         screen.blit(DOUBLE_JUMP_IMG, (DOUBLE_JUMP_EMPLACEMENT.x + 1, DOUBLE_JUMP_EMPLACEMENT.y + 1))
     else:
         screen.blit(DOUBLE_JUMP_CD_IMG, (DOUBLE_JUMP_EMPLACEMENT.x + 1, DOUBLE_JUMP_EMPLACEMENT.y + 1))
@@ -1060,7 +1129,7 @@ def main_game_draw_window():
             screen.blit(SLOWFALL_ON_IMG, (SLOWFALL_EMPLACEMENT.x + 1, SLOWFALL_EMPLACEMENT.y + 1))
         else:
             screen.blit(SLOWFALL_OFF_IMG, (SLOWFALL_EMPLACEMENT.x + 1, SLOWFALL_EMPLACEMENT.y + 1))
-    else:
+    elif player.job == "Knight":
         if player.shield_up:
             pygame.draw.rect(screen, YELLOW, SLOWFALL_EMPLACEMENT)
             screen.blit(SHIELD_UP_ON_IMG, (SLOWFALL_EMPLACEMENT.x + 1, SLOWFALL_EMPLACEMENT.y + 1))
@@ -1072,6 +1141,16 @@ def main_game_draw_window():
             screen.blit(SHIELD_UP_CD_IMG, (SLOWFALL_EMPLACEMENT.x + 1, SLOWFALL_EMPLACEMENT.y + 1))
             special_cd_text = font.render(f"{player.special_timer + player.special_cd - time.time():.1f}", 1, WHITE)
             screen.blit(special_cd_text, (SLOWFALL_EMPLACEMENT.centerx - special_cd_text.get_width()//2, SLOWFALL_EMPLACEMENT.centery - special_cd_text.get_height()//2))
+    elif player.job == "Dragon":
+        if time.time() - player.special_timer >= player.special_cd:
+            screen.blit(ROAR_IMG, (SLOWFALL_EMPLACEMENT.x + 1, SLOWFALL_EMPLACEMENT.y + 1))
+        else:
+            screen.blit(ROAR_CD_IMG, (SLOWFALL_EMPLACEMENT.x + 1, SLOWFALL_EMPLACEMENT.y + 1))
+            special_cd_text = font.render(f"{player.special_timer + player.special_cd - time.time():.1f}", 1, WHITE)
+            screen.blit(special_cd_text, (SLOWFALL_EMPLACEMENT.centerx - special_cd_text.get_width()//2, SLOWFALL_EMPLACEMENT.centery - special_cd_text.get_height()//2))
+
+    else:
+        screen.blit(SLOWFALL_OFF_IMG, (SLOWFALL_EMPLACEMENT.x + 1, SLOWFALL_EMPLACEMENT.y + 1))
             
     if player.hp <= 0:
         screen.blit(PLAYER_DEAD_IMG,(player.player_ch.x, player.player_ch.y))
@@ -1080,6 +1159,8 @@ def main_game_draw_window():
             screen.blit(player.mage_skin_hit, (player.player_ch.x, player.player_ch.y))
         elif player.job == "Knight":
             screen.blit(player.knight_skin_hit, (player.player_ch.x, player.player_ch.y))
+        elif player.job == "Dragon":
+            screen.blit(player.dragon_skin_hit, (player.player_ch.x, player.player_ch.y))
         else:
             screen.blit(PLAYER_HIT_IMG, (player.player_ch.x, player.player_ch.y))
     else:
@@ -1087,6 +1168,8 @@ def main_game_draw_window():
             screen.blit(player.mage_skin, (player.player_ch.x, player.player_ch.y))
         elif player.job == "Knight":
             screen.blit(player.knight_skin, (player.player_ch.x, player.player_ch.y))
+        elif player.job == "Dragon":
+            screen.blit(player.dragon_skin, (player.player_ch.x, player.player_ch.y))
         else:
             screen.blit(PLAYER_IMG, (player.player_ch.x, player.player_ch.y))
 
@@ -1099,6 +1182,8 @@ def main_game_draw_window():
         screen.blit(MAGE_ICON, (JOB_ICON_EMPLACEMENT_IG.x + 1, JOB_ICON_EMPLACEMENT_IG.y + 1))
     elif player.job == "Knight":
         screen.blit(KNIGHT_ICON, (JOB_ICON_EMPLACEMENT_IG.x + 1, JOB_ICON_EMPLACEMENT_IG.y + 1))
+    elif player.job == "Dragon":
+        screen.blit(DRAGON_ICON, (JOB_ICON_EMPLACEMENT_IG.x + 1, JOB_ICON_EMPLACEMENT_IG.y + 1))
     
 
     pygame.display.update()
@@ -1147,6 +1232,8 @@ def main_game():
 
             # Specials
             if special or (jump and player.double_jump == False and stomp == False and player.special_type == "Slowfall"):
+
+                # Mage
                 if player.special_type == "Slowfall":
                     if player.jump_velocity < 0:
                         player.slowfall = True
@@ -1154,11 +1241,27 @@ def main_game():
                         player.jump_velocity_multiplier = 0.5
                     else:
                         player.slowfall = False
+                
+                # Knight
                 elif player.special_type == "Shield Up":
                     if time.time() - player.special_timer >= player.special_cd:
                         player.immune = True
                         player.special_timer = time.time()
                         player.shield_up = True
+
+                # Dragon
+                elif player.special_type == "Roar":
+                    if time.time() - player.special_timer >= player.special_cd:
+                        player.special_timer = time.time()
+                        to_be_removed = []
+                        for bullet in projectile.list:
+                            if bullet["type"] == "basic" or bullet["type"] == "ground":
+                                dist_to_player = int(math.dist((player.player_ch.x, player.player_ch.y),(bullet["rect"].x, bullet["rect"].y)))
+                                if dist_to_player <= player.roar_radius:
+                                    to_be_removed.append(bullet)
+                        if len(to_be_removed) > 0:
+                            for bullet in to_be_removed:
+                                projectile.list.remove(bullet)
             else:
                 player.slowfall = False
 
@@ -1173,14 +1276,23 @@ def main_game():
                 player.jump_velocity = player.jump_power
                 player.ground = False
             elif jump and player.double_jump and player.ground == False and stomp == False:
-                player.jump_velocity = player.jump_power * player.double_jump_multiplier
-                player.double_jump = False
-                animations.list.append({"type" : "double_jump", "x" : player.player_ch.x, "y" : player.player_ch.centery, "max_frame" : 8, "current_frame" : 0})
+                if player.job == "Dragon" and player.endurance >= 10:
+                    player.grounded = False
+                    player.grounded_timer = 0
+                    player.jump_velocity = player.jump_power
+                    player.endurance -= 25
+                elif player.job != "Dragon":
+                    player.jump_velocity = player.jump_power * player.double_jump_multiplier
+                    player.double_jump = False
+                    animations.list.append({"type" : "double_jump", "x" : player.player_ch.x, "y" : player.player_ch.centery, "max_frame" : 8, "current_frame" : 0})
 
             # Falling
             if player.ground == False and player.charge == False:
                 player.player_ch.y -= player.jump_velocity * player.jump_velocity_multiplier
                 player.jump_velocity -= 0.5 * player.jump_velocity_multiplier
+                if player.player_ch.y < TOP_BAND.bottom:
+                    player.player_ch.y = TOP_BAND.bottom
+                    player.jump_velocity /= 5
 
             # Touch ground
             if player.player_ch.colliderect(GROUND):
@@ -1191,6 +1303,23 @@ def main_game():
                     animations.list.append({"type" : "stomp", "x" : player.player_ch.x, "y" : player.player_ch.centery, "max_frame" : 15, "current_frame" : 0})
                 stomp = False
                 player.double_jump = True
+                if player.job == "Dragon":
+                    player.grounded = True
+                    player.grounded_timer = time.time()
+
+            # Dragon logic
+            if player.job == "Dragon":
+                # Endurance regen/timer
+                if player.grounded and time.time() - player.grounded_timer >= 0.5 and player.endurance < 100:
+                    player.endurance += 25
+                    player.grounded_timer = time.time()
+                    if player.endurance > 100:
+                        player.endurance = 100
+                # Soar logic
+                if player.soar and player.player_ch.y <= TOP_BAND.bottom + 100:
+                    player.soar = False
+                    player.jump_velocity /= 5
+
 
             # Mage dash preview update (Can probably move it elsewhere)
             if time.time() - player.dash_timer >= player.dash_cd:
@@ -1217,11 +1346,16 @@ def main_game():
                         player.jump_velocity = 0
                         if player.charge_end > LIMIT.x:
                             player.charge_end = LIMIT.x - player.player_ch.width - 5
+                    elif player.dash_type == "Soar":
+                        player.soar = True
+                        player.dash_timer = time.time()
+                        player.ground = False
+                        player.jump_velocity = player.dash_power
 
             # Knight Dash logic (need to fix endless dash)
             if player.charge:
                 player.player_ch.x += player.dash_power//25
-                if player.player_ch.x >= player.charge_end or time.time() - player.dash_timer >= 1:
+                if player.player_ch.x >= player.charge_end or time.time() - player.dash_timer >= 0.75:
                     player.charge = False
                 if player.player_ch.right >= LIMIT.x:
                     player.player_ch.right = LIMIT.x
@@ -1264,6 +1398,10 @@ def main_game():
                             if game.best_time > entry["best_time_knight"]:
                                 entry["best_time_knight"] = game.best_time
                                 player.best_time_knight = game.best_time
+                        elif player.job == "Dragon":
+                            if game.best_time > entry["best_time_dragon"]:
+                                entry["best_time_dragon"] = game.best_time
+                                player.best_time_dragon = game.best_time
                         entry["gold"] = player.gold
 
                 with open("dodge_save.txt", "wb") as f:
@@ -1531,6 +1669,8 @@ def game_over_draw_window():
         screen.blit(MAGE_ICON, (JOB_ICON_EMPLACEMENT_GO.x + 1, JOB_ICON_EMPLACEMENT_GO.y + 1))
     elif player.job == "Knight":
         screen.blit(KNIGHT_ICON, (JOB_ICON_EMPLACEMENT_GO.x + 1, JOB_ICON_EMPLACEMENT_GO.y + 1))
+    elif player.job == "Dragon":
+        screen.blit(DRAGON_ICON, (JOB_ICON_EMPLACEMENT_GO.x + 1, JOB_ICON_EMPLACEMENT_GO.y + 1))
         
     pygame.draw.rect(screen, RED, CHANGE_JOB_BUTTON)
     screen.blit(pygame.transform.scale(PANEL_IMG, (CHANGE_JOB_BUTTON.width - 2, CHANGE_JOB_BUTTON.height - 2)), (CHANGE_JOB_BUTTON.x + 1, CHANGE_JOB_BUTTON.y + 1))
@@ -1662,12 +1802,12 @@ def job_select_draw_window():
         pygame.draw.rect(screen, BLACK, KNIGHT_ICON_EMPLACEMENT)
     screen.blit(pygame.transform.scale(KNIGHT_ICON, (60,60)), (KNIGHT_ICON_EMPLACEMENT.x + 1, KNIGHT_ICON_EMPLACEMENT.y + 1))
 
-    if player.job == "Job3":
+    if player.job == "Dragon":
         pygame.draw.rect(screen, RED, JOB3_ICON_EMPLACEMENT)
-        #screen.blit(KNIGHT_IMG, (JOB_PREVIEW.centerx - KNIGHT_IMG.get_width()//2, JOB_PREVIEW.centery - KNIGHT_IMG.get_height()//2))
+        screen.blit(player.dragon_skin, (JOB_PREVIEW.centerx - player.dragon_skin.get_width()//2, JOB_PREVIEW.centery - player.dragon_skin.get_height()//2))
     else:
         pygame.draw.rect(screen, BLACK, JOB3_ICON_EMPLACEMENT)
-    #screen.blit(pygame.transform.scale(KNIGHT_ICON, (60,60)), (JOB3_ICON_EMPLACEMENT.x + 1, JOB3_ICON_EMPLACEMENT.y + 1))
+    screen.blit(pygame.transform.scale(DRAGON_ICON, (60,60)), (JOB3_ICON_EMPLACEMENT.x + 1, JOB3_ICON_EMPLACEMENT.y + 1))
 
     if player.job == "Job4":
         pygame.draw.rect(screen, RED, JOB4_ICON_EMPLACEMENT)
@@ -1730,6 +1870,8 @@ def job_select_draw_window():
         best_time = font.render(f"Best time : {player.best_time_mage:.2f}s", 1, WHITE)
     if player.job == "Knight":
         best_time = font.render(f"Best time : {player.best_time_knight:.2f}s", 1, WHITE)
+    if player.job == "Dragon":
+        best_time = font.render(f"Best time : {player.best_time_dragon:.2f}s", 1, WHITE)
     screen.blit(best_time, (STATS_RECT.x + 10, STATS_RECT.y + 100))
 
     active_text = font.render(f"Active : {player.special_type}", 1, WHITE)
@@ -1769,6 +1911,12 @@ def job_select():
             for entry in game.ranking_list:
                 if entry["name"] == game.player_name:
                     game.best_time = entry["best_time_knight"]
+        if JOB3_ICON_EMPLACEMENT.collidepoint((mx,my)) and click:
+            player.job = "Dragon"
+            switch_job()
+            for entry in game.ranking_list:
+                if entry["name"] == game.player_name:
+                    game.best_time = entry["best_time_dragon"]
 
         if Q1_EMPLACEMENT.collidepoint((mx,my)) and click:
             key_list = list(player.quest_dic)
@@ -3210,7 +3358,7 @@ def ranking_screen():
             
         if RK_JOB3_BUTTON.collidepoint((mx,my)) and click:
             page = 1
-            job = "Job3"
+            job = "Dragon"
             max_page = 1
             
         if RK_JOB4_BUTTON.collidepoint((mx,my)) and click:
@@ -3716,7 +3864,20 @@ def menu():
         with open("dodge_save.txt", "rb") as f:
             game.ranking_list = pickle.load(f)
     except:
-        game.ranking_list.append({"name" : game.player_name, "time" : game.best_time, "job" : player.job, "best_time_mage" : 0, "best_time_knight" : 0, "gold" : player.gold, "mage_skin" : ["MaHuRe"], "knight_skin" : ["KnSpHuBl"], "current_mage_skin" : "MaHuRe", "current_knight_skin" : "KnSpHuBl", "quest" : {}})
+        game.ranking_list.append({"name" : game.player_name,
+                                  "time" : game.best_time,
+                                  "job" : player.job,
+                                  "best_time_mage" : 0,
+                                  "best_time_knight" : 0,
+                                  "best_time_dragon" : 0,
+                                  "gold" : player.gold,
+                                  "mage_skin" : ["MaHuRe"],
+                                  "knight_skin" : ["KnSpHuBl"],
+                                  "dragon_skin" : ["KnSpHuBl"],
+                                  "current_mage_skin" : "MaHuRe",
+                                  "current_knight_skin" : "KnSpHuBl",
+                                  "current_dragon_skin" : "KnSpHuBl",
+                                  "quest" : {}})
 
     run = True
     click = False
@@ -3755,14 +3916,30 @@ def menu():
             game.best_time = 0
             player.best_time_mage = 0
             player.best_time_knight = 0
+            player.best_time_dragon = 0
             player.gold = 0
             player.skin_mage_list = ["MaHuRe"]
             player.skin_knight_list = ["KnSpHuBl"]
+            player.skin_dragon_list = ["KnSpHuBl"]
             player.current_mage_skin_name = "MaHuRe"
             player.current_knight_skin_name = "KnSpHuBl"
+            player.current_dragon_skin_name = "KnSpHuBl"
             player.quest_dic = {}
             if game.name_box_active == False:
-                game.ranking_list.append({"name" : game.player_name, "time" : 0, "job" : "Mage", "best_time_mage" : 0, "best_time_knight" : 0, "gold" : 0, "mage_skin" : ["MaHuRe"], "knight_skin" : ["KnSpHuBl"], "current_mage_skin" : "MaHuRe", "current_knight_skin" : "KnSpHuBl", "quest" : {}})
+                game.ranking_list.append({"name" : game.player_name,
+                                          "time" : 0,
+                                          "job" : "Mage",
+                                          "best_time_mage" : 0,
+                                          "best_time_knight" : 0,
+                                          "best_time_dragon" : 0,
+                                          "gold" : 0,
+                                          "mage_skin" : ["MaHuRe"],
+                                          "knight_skin" : ["KnSpHuBl"],
+                                          "dragon_skin" : ["KnSpHuBl"],
+                                          "current_mage_skin" : "MaHuRe",
+                                          "current_knight_skin" : "KnSpHuBl",
+                                          "current_dragon_skin" : "KnSpHuBl",
+                                          "quest" : {}})
         exist = False
 
         reorder_ranking()
