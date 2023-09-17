@@ -4525,10 +4525,10 @@ def menu():
                 player.gold = entry["gold"]
                 player.skin_mage_list = entry["mage_skin"]
                 player.skin_knight_list = entry["knight_skin"]
-                player.skin_knight_list = entry["dragon_skin"]
+                player.skin_dragon_list = entry["dragon_skin"]
                 player.current_mage_skin_name = entry["current_mage_skin"]
                 player.current_knight_skin_name = entry["current_knight_skin"]
-                player.current_knight_skin_name = entry["current_dragon_skin"]
+                player.current_dragon_skin_name = entry["current_dragon_skin"]
                 player.quest_dic = entry["quest"]
                 reassign_skin()
                 exist = True
