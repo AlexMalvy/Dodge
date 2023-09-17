@@ -57,11 +57,16 @@ BACK_BUTTON_B_MIDDLE = pygame.Rect(WIDTH//2 - 20, HEIGHT - 50, 100, 40)
 BACK_BUTTON_B_RIGHT = pygame.Rect(WIDTH - 115, HEIGHT - 50, 100, 40)
 
 # Main Menu
+MENU_PLAYER_INFO_CARD = pygame.Rect(25, HEIGHT//3, 350, 300)
+
+
 PLAY_BUTTON = pygame.Rect(WIDTH//2 - 125, HEIGHT//3, 250, 40)
 SHOP_BUTTON = pygame.Rect(WIDTH//2 - 125, HEIGHT//3 + 100, 250, 40)
 RANKING_BUTTON = pygame.Rect(WIDTH//2 - 125, HEIGHT//3 + 200, 250, 40)
 SETTING_BUTTON = pygame.Rect(WIDTH//2 - 125, HEIGHT//3 + 300, 250, 40)
-NAME_ENTRY = pygame.Rect(WIDTH//2 - 150, HEIGHT - 45, 300, 40)
+NAME_ENTRY = pygame.Rect(WIDTH - 325, HEIGHT - 45, 300, 40)
+NAME_ENTRY_MENU = pygame.Rect(MENU_PLAYER_INFO_CARD.x + (MENU_PLAYER_INFO_CARD.width - 300)//2, MENU_PLAYER_INFO_CARD.y + 45, 300, 40)
+MENU_GOLD_AMOUNT = pygame.Rect(WIDTH - 170, HEIGHT - 70, 150, 50)
 
 # Settings
 ST_LEFT_BUTTON = pygame.Rect(75, 200, 100, 50)
@@ -191,6 +196,8 @@ KNIGHT_SKIN_BUTTON = pygame.Rect(50, 257, 200, 40)
 JOB3_SKIN_BUTTON = pygame.Rect(50, 364, 200, 40)
 JOB4_SKIN_BUTTON = pygame.Rect(50, 470, 200, 40)
 
+PREVIEW_WINDOW = pygame.Rect(STATS_RECT.centerx - 52, STATS_RECT.bottom - 25 - 104, 104, 104)
+
 
 ## Main Game
 
@@ -208,8 +215,8 @@ JOB_ICON_EMPLACEMENT_IG = pygame.Rect(WIDTH//2 + 200, HEIGHT - 46, 42, 42)
 
 # Abilities
 DOUBLE_JUMP_EMPLACEMENT = pygame.Rect( WIDTH//8, HEIGHT - 46, 42, 42)
-SLOWFALL_EMPLACEMENT = pygame.Rect( WIDTH//8 + 50, HEIGHT - 46, 42, 42)
-DASH_EMPLACEMENT = pygame.Rect( WIDTH//8 + 100, HEIGHT - 46, 42, 42)
+DASH_EMPLACEMENT = pygame.Rect( WIDTH//8 + 50, HEIGHT - 46, 42, 42)
+SLOWFALL_EMPLACEMENT = pygame.Rect( WIDTH//8 + 100, HEIGHT - 46, 42, 42)
 
 
 ## Game Over Screen
@@ -2527,12 +2534,12 @@ def job_skin_shop_draw_window():
     knight_skin_text = font.render("Knight", 1, WHITE)
     screen.blit(knight_skin_text, (KNIGHT_SKIN_BUTTON.centerx - knight_skin_text.get_width()//2, KNIGHT_SKIN_BUTTON.centery - knight_skin_text.get_height()//2))
     
-    if shop.page == "Job3":
+    if shop.page == "Dragon":
         pygame.draw.rect(screen, YELLOW, JOB3_SKIN_BUTTON)
     else:
         pygame.draw.rect(screen, RED, JOB3_SKIN_BUTTON)
     screen.blit(pygame.transform.scale(PANEL_IMG, (JOB3_SKIN_BUTTON.width - 2, JOB3_SKIN_BUTTON.height - 2)), (JOB3_SKIN_BUTTON.x + 1, JOB3_SKIN_BUTTON.y + 1))
-    job3_skin_text = font.render("Job3", 1, WHITE)
+    job3_skin_text = font.render("Dragon", 1, WHITE)
     screen.blit(job3_skin_text, (JOB3_SKIN_BUTTON.centerx - job3_skin_text.get_width()//2, JOB3_SKIN_BUTTON.centery - job3_skin_text.get_height()//2))
     
     if shop.page == "Job4":
@@ -2544,8 +2551,13 @@ def job_skin_shop_draw_window():
     screen.blit(job4_skin_text, (JOB4_SKIN_BUTTON.centerx - job4_skin_text.get_width()//2, JOB4_SKIN_BUTTON.centery - job4_skin_text.get_height()//2))
 
     # Item slot
+    skin_previewed = None
     if shop.item == 1:
         pygame.draw.rect(screen, YELLOW, ITEM_1_S)
+        if shop.page == "Mage":
+            skin_previewed = shop_mage_skin_db.item_1
+        if shop.page == "Knight":
+            skin_previewed = shop_knight_skin_db.item_1
     else:
         pygame.draw.rect(screen, RED, ITEM_1_S)
     screen.blit(pygame.transform.scale(PANEL_IMG, (ITEM_1_S.width - 2, ITEM_1_S.height - 2)), (ITEM_1_S.x + 1, ITEM_1_S.y + 1))
@@ -2564,6 +2576,10 @@ def job_skin_shop_draw_window():
     
     if shop.item == 2:
         pygame.draw.rect(screen, YELLOW, ITEM_2_S)
+        if shop.page == "Mage":
+            skin_previewed = shop_mage_skin_db.item_2
+        if shop.page == "Knight":
+            skin_previewed = shop_knight_skin_db.item_2
     else:
         pygame.draw.rect(screen, RED, ITEM_2_S)
     screen.blit(pygame.transform.scale(PANEL_IMG, (ITEM_2_S.width - 2, ITEM_2_S.height - 2)), (ITEM_2_S.x + 1, ITEM_2_S.y + 1))
@@ -2582,6 +2598,10 @@ def job_skin_shop_draw_window():
     
     if shop.item == 3:
         pygame.draw.rect(screen, YELLOW, ITEM_3_S)
+        if shop.page == "Mage":
+            skin_previewed = shop_mage_skin_db.item_3
+        if shop.page == "Knight":
+            skin_previewed = shop_knight_skin_db.item_3
     else:
         pygame.draw.rect(screen, RED, ITEM_3_S)
     screen.blit(pygame.transform.scale(PANEL_IMG, (ITEM_3_S.width - 2, ITEM_3_S.height - 2)), (ITEM_3_S.x + 1, ITEM_3_S.y + 1))
@@ -2600,6 +2620,10 @@ def job_skin_shop_draw_window():
     
     if shop.item == 4:
         pygame.draw.rect(screen, YELLOW, ITEM_4_S)
+        if shop.page == "Mage":
+            skin_previewed = shop_mage_skin_db.item_4
+        if shop.page == "Knight":
+            skin_previewed = shop_knight_skin_db.item_4
     else:
         pygame.draw.rect(screen, RED, ITEM_4_S)
     screen.blit(pygame.transform.scale(PANEL_IMG, (ITEM_4_S.width - 2, ITEM_4_S.height - 2)), (ITEM_4_S.x + 1, ITEM_4_S.y + 1))
@@ -2618,6 +2642,10 @@ def job_skin_shop_draw_window():
     
     if shop.item == 5:
         pygame.draw.rect(screen, YELLOW, ITEM_5_S)
+        if shop.page == "Mage":
+            skin_previewed = shop_mage_skin_db.item_5
+        if shop.page == "Knight":
+            skin_previewed = shop_knight_skin_db.item_5
     else:
         pygame.draw.rect(screen, RED, ITEM_5_S)
     screen.blit(pygame.transform.scale(PANEL_IMG, (ITEM_5_S.width - 2, ITEM_5_S.height - 2)), (ITEM_5_S.x + 1, ITEM_5_S.y + 1))
@@ -2636,6 +2664,10 @@ def job_skin_shop_draw_window():
     
     if shop.item == 6:
         pygame.draw.rect(screen, YELLOW, ITEM_6_S)
+        if shop.page == "Mage":
+            skin_previewed = shop_mage_skin_db.item_6
+        if shop.page == "Knight":
+            skin_previewed = shop_knight_skin_db.item_6
     else:
         pygame.draw.rect(screen, RED, ITEM_6_S)
     screen.blit(pygame.transform.scale(PANEL_IMG, (ITEM_6_S.width - 2, ITEM_6_S.height - 2)), (ITEM_6_S.x + 1, ITEM_6_S.y + 1))
@@ -2654,6 +2686,10 @@ def job_skin_shop_draw_window():
     
     if shop.item == 7:
         pygame.draw.rect(screen, YELLOW, ITEM_7_S)
+        if shop.page == "Mage":
+            skin_previewed = shop_mage_skin_db.item_7
+        if shop.page == "Knight":
+            skin_previewed = shop_knight_skin_db.item_7
     else:
         pygame.draw.rect(screen, RED, ITEM_7_S)
     screen.blit(pygame.transform.scale(PANEL_IMG, (ITEM_7_S.width - 2, ITEM_7_S.height - 2)), (ITEM_7_S.x + 1, ITEM_7_S.y + 1))
@@ -2672,6 +2708,10 @@ def job_skin_shop_draw_window():
     
     if shop.item == 8:
         pygame.draw.rect(screen, YELLOW, ITEM_8_S)
+        if shop.page == "Mage":
+            skin_previewed = shop_mage_skin_db.item_8
+        if shop.page == "Knight":
+            skin_previewed = shop_knight_skin_db.item_8
     else:
         pygame.draw.rect(screen, RED, ITEM_8_S)
     screen.blit(pygame.transform.scale(PANEL_IMG, (ITEM_8_S.width - 2, ITEM_8_S.height - 2)), (ITEM_8_S.x + 1, ITEM_8_S.y + 1))
@@ -2690,6 +2730,10 @@ def job_skin_shop_draw_window():
     
     if shop.item == 9:
         pygame.draw.rect(screen, YELLOW, ITEM_9_S)
+        if shop.page == "Mage":
+            skin_previewed = shop_mage_skin_db.item_9
+        if shop.page == "Knight":
+            skin_previewed = shop_knight_skin_db.item_9
     else:
         pygame.draw.rect(screen, RED, ITEM_9_S)
     screen.blit(pygame.transform.scale(PANEL_IMG, (ITEM_9_S.width - 2, ITEM_9_S.height - 2)), (ITEM_9_S.x + 1, ITEM_9_S.y + 1))
@@ -2708,6 +2752,10 @@ def job_skin_shop_draw_window():
     
     if shop.item == 10:
         pygame.draw.rect(screen, YELLOW, ITEM_10_S)
+        if shop.page == "Mage":
+            skin_previewed = shop_mage_skin_db.item_10
+        if shop.page == "Knight":
+            skin_previewed = shop_knight_skin_db.item_10
     else:
         pygame.draw.rect(screen, RED, ITEM_10_S)
     screen.blit(pygame.transform.scale(PANEL_IMG, (ITEM_10_S.width - 2, ITEM_10_S.height - 2)), (ITEM_10_S.x + 1, ITEM_10_S.y + 1))
@@ -2726,6 +2774,10 @@ def job_skin_shop_draw_window():
     
     if shop.item == 11:
         pygame.draw.rect(screen, YELLOW, ITEM_11_S)
+        if shop.page == "Mage":
+            skin_previewed = shop_mage_skin_db.item_11
+        if shop.page == "Knight":
+            skin_previewed = shop_knight_skin_db.item_11
     else:
         pygame.draw.rect(screen, RED, ITEM_11_S)
     screen.blit(pygame.transform.scale(PANEL_IMG, (ITEM_11_S.width - 2, ITEM_11_S.height - 2)), (ITEM_11_S.x + 1, ITEM_11_S.y + 1))
@@ -2744,6 +2796,10 @@ def job_skin_shop_draw_window():
     
     if shop.item == 12:
         pygame.draw.rect(screen, YELLOW, ITEM_12_S)
+        if shop.page == "Mage":
+            skin_previewed = shop_mage_skin_db.item_12
+        if shop.page == "Knight":
+            skin_previewed = shop_knight_skin_db.item_12
     else:
         pygame.draw.rect(screen, RED, ITEM_12_S)
     screen.blit(pygame.transform.scale(PANEL_IMG, (ITEM_12_S.width - 2, ITEM_12_S.height - 2)), (ITEM_12_S.x + 1, ITEM_12_S.y + 1))
@@ -2762,6 +2818,10 @@ def job_skin_shop_draw_window():
     
     if shop.item == 13:
         pygame.draw.rect(screen, YELLOW, ITEM_13_S)
+        if shop.page == "Mage":
+            skin_previewed = shop_mage_skin_db.item_13
+        if shop.page == "Knight":
+            skin_previewed = shop_knight_skin_db.item_13
     else:
         pygame.draw.rect(screen, RED, ITEM_13_S)
     screen.blit(pygame.transform.scale(PANEL_IMG, (ITEM_13_S.width - 2, ITEM_13_S.height - 2)), (ITEM_13_S.x + 1, ITEM_13_S.y + 1))
@@ -2780,6 +2840,10 @@ def job_skin_shop_draw_window():
     
     if shop.item == 14:
         pygame.draw.rect(screen, YELLOW, ITEM_14_S)
+        if shop.page == "Mage":
+            skin_previewed = shop_mage_skin_db.item_14
+        if shop.page == "Knight":
+            skin_previewed = shop_knight_skin_db.item_14
     else:
         pygame.draw.rect(screen, RED, ITEM_14_S)
     screen.blit(pygame.transform.scale(PANEL_IMG, (ITEM_14_S.width - 2, ITEM_14_S.height - 2)), (ITEM_14_S.x + 1, ITEM_14_S.y + 1))
@@ -2798,6 +2862,10 @@ def job_skin_shop_draw_window():
     
     if shop.item == 15:
         pygame.draw.rect(screen, YELLOW, ITEM_15_S)
+        if shop.page == "Mage":
+            skin_previewed = shop_mage_skin_db.item_15
+        if shop.page == "Knight":
+            skin_previewed = shop_knight_skin_db.item_15
     else:
         pygame.draw.rect(screen, RED, ITEM_15_S)
     screen.blit(pygame.transform.scale(PANEL_IMG, (ITEM_15_S.width - 2, ITEM_15_S.height - 2)), (ITEM_15_S.x + 1, ITEM_15_S.y + 1))
@@ -2816,6 +2884,10 @@ def job_skin_shop_draw_window():
     
     if shop.item == 16:
         pygame.draw.rect(screen, YELLOW, ITEM_16_S)
+        if shop.page == "Mage":
+            skin_previewed = shop_mage_skin_db.item_16
+        if shop.page == "Knight":
+            skin_previewed = shop_knight_skin_db.item_16
     else:
         pygame.draw.rect(screen, RED, ITEM_16_S)
     screen.blit(pygame.transform.scale(PANEL_IMG, (ITEM_16_S.width - 2, ITEM_16_S.height - 2)), (ITEM_16_S.x + 1, ITEM_16_S.y + 1))
@@ -2845,8 +2917,15 @@ def job_skin_shop_draw_window():
             else:
                 owned_text = font.render(f"Owned", 1, GREEN)
                 screen.blit(owned_text, (STATS_RECT.centerx - owned_text.get_width()//2, STATS_RECT.y + 50))
+        else:
+            not_owned_text = font.render(f"Not Owned", 1, DARK_RED)
+            screen.blit(not_owned_text, (STATS_RECT.centerx - not_owned_text.get_width()//2, STATS_RECT.y + 50))
         cost_text = font.render(f"Cost : {shop.item_cost}", 1, WHITE)
-        screen.blit(cost_text, (STATS_RECT.x + 10, STATS_RECT.y + 80))
+        screen.blit(cost_text, (STATS_RECT.x + 10, STATS_RECT.y + 90))
+        if skin_previewed:
+            pygame.draw.rect(screen, GRAY, PREVIEW_WINDOW)
+            screen.blit(pygame.transform.scale(PANEL_IMG, (PREVIEW_WINDOW.width - 2, PREVIEW_WINDOW.height - 2)), (PREVIEW_WINDOW.x + 1, PREVIEW_WINDOW.y + 1))
+            screen.blit(pygame.transform.scale(skin_previewed, (100, 100)), (PREVIEW_WINDOW.x + 2, PREVIEW_WINDOW.y + 2))
         if shop.description1 != "":
             description_text = font.render(f"Description :", 1, WHITE)
             screen.blit(description_text, (STATS_RECT.x + 10, STATS_RECT.y + 130))
@@ -3021,6 +3100,12 @@ def shopping_draw_window():
     screen.blit(pygame.transform.scale(PANEL_IMG, (DUNGEON_BACKGROUND_SHOP_BUTTON.width - 2, DUNGEON_BACKGROUND_SHOP_BUTTON.height - 2)), (DUNGEON_BACKGROUND_SHOP_BUTTON.x + 1, DUNGEON_BACKGROUND_SHOP_BUTTON.y + 1))
     dungeon_bg_text = font.render("Dungeon", 1, WHITE)
     screen.blit(dungeon_bg_text, (DUNGEON_BACKGROUND_SHOP_BUTTON.centerx - dungeon_bg_text.get_width()//2, DUNGEON_BACKGROUND_SHOP_BUTTON.centery - dungeon_bg_text.get_height()//2))
+
+    pygame.draw.rect(screen, DARK_GRAY, MENU_GOLD_AMOUNT)
+    screen.blit(pygame.transform.scale(PANEL_IMG, (MENU_GOLD_AMOUNT.width - 2, MENU_GOLD_AMOUNT.height - 2)), (MENU_GOLD_AMOUNT.x + 1, MENU_GOLD_AMOUNT.y + 1))
+    gold_text = font.render(f"{player.gold}", 1, WHITE)
+    screen.blit(gold_text, (MENU_GOLD_AMOUNT.right - gold_text.get_width() - COIN_IMG.get_width() - 10, MENU_GOLD_AMOUNT.centery - gold_text.get_height()//2 + 3))
+    screen.blit(COIN_IMG, (MENU_GOLD_AMOUNT.right - COIN_IMG.get_width() - 5, MENU_GOLD_AMOUNT.centery - COIN_IMG.get_height()//2))
 
     pygame.draw.rect(screen, RED, BACK_BUTTON_B_LEFT)
     screen.blit(pygame.transform.scale(PANEL_IMG, (BACK_BUTTON_B_LEFT.width - 2, BACK_BUTTON_B_LEFT.height - 2)), (BACK_BUTTON_B_LEFT.x + 1, BACK_BUTTON_B_LEFT.y + 1))
@@ -3845,17 +3930,34 @@ def menu_draw_window():
     settings_text = font.render("Settings", 1, WHITE)
     screen.blit(settings_text, (SETTING_BUTTON.centerx - settings_text.get_width()//2, SETTING_BUTTON.centery - settings_text.get_height()//2))
 
+    pygame.draw.rect(screen, DARK_GRAY, MENU_PLAYER_INFO_CARD)
+    screen.blit(pygame.transform.scale(PANEL_IMG, (MENU_PLAYER_INFO_CARD.width - 2, MENU_PLAYER_INFO_CARD.height - 2)), (MENU_PLAYER_INFO_CARD.x + 1, MENU_PLAYER_INFO_CARD.y + 1))
+    player_info_title_text = font.render("Player Info", 1, WHITE)
+    screen.blit(player_info_title_text, (MENU_PLAYER_INFO_CARD.centerx - player_info_title_text.get_width()//2, MENU_PLAYER_INFO_CARD.y + 10))
+
     if game.name_box_active:
-        pygame.draw.rect(screen, YELLOW, NAME_ENTRY)
-        screen.blit(NAME_ENTRY_ON, (NAME_ENTRY.x + 1, NAME_ENTRY.y + 1))
+        pygame.draw.rect(screen, YELLOW, NAME_ENTRY_MENU)
+        screen.blit(NAME_ENTRY_ON, (NAME_ENTRY_MENU.x + 1, NAME_ENTRY_MENU.y + 1))
     else:
-        pygame.draw.rect(screen, RED, NAME_ENTRY)
-        screen.blit(NAME_ENTRY_OFF, (NAME_ENTRY.x + 1, NAME_ENTRY.y + 1))
+        pygame.draw.rect(screen, RED, NAME_ENTRY_MENU)
+        screen.blit(NAME_ENTRY_OFF, (NAME_ENTRY_MENU.x + 1, NAME_ENTRY_MENU.y + 1))
     if game.player_name == "" and game.name_box_active == False:
         name_text = font.render("Enter Player Name", 1, WHITE)
     else:
         name_text = font.render(f"{game.player_name}", 1, WHITE)
-    screen.blit(name_text, (NAME_ENTRY.centerx - name_text.get_width()//2, NAME_ENTRY.centery - name_text.get_height()//2))
+    screen.blit(name_text, (NAME_ENTRY_MENU.centerx - name_text.get_width()//2, NAME_ENTRY_MENU.centery - name_text.get_height()//2))
+
+    best_job_text = font.render(f"Best Job : {game.player_best_time_job}", 1, WHITE)
+    screen.blit(best_job_text, (NAME_ENTRY_MENU.x, NAME_ENTRY_MENU.bottom + 20))
+
+    best_time_text = font.render(f"Time : {game.best_time_ever:.2f}s", 1, WHITE)
+    screen.blit(best_time_text, (NAME_ENTRY_MENU.x, NAME_ENTRY_MENU.bottom + 50))
+
+    pygame.draw.rect(screen, DARK_GRAY, MENU_GOLD_AMOUNT)
+    screen.blit(pygame.transform.scale(PANEL_IMG, (MENU_GOLD_AMOUNT.width - 2, MENU_GOLD_AMOUNT.height - 2)), (MENU_GOLD_AMOUNT.x + 1, MENU_GOLD_AMOUNT.y + 1))
+    gold_text = font.render(f"{player.gold}", 1, WHITE)
+    screen.blit(gold_text, (MENU_GOLD_AMOUNT.right - gold_text.get_width() - COIN_IMG.get_width() - 10, MENU_GOLD_AMOUNT.centery - gold_text.get_height()//2 + 3))
+    screen.blit(COIN_IMG, (MENU_GOLD_AMOUNT.right - COIN_IMG.get_width() - 5, MENU_GOLD_AMOUNT.centery - COIN_IMG.get_height()//2))
 
     pygame.display.update()
 
@@ -3947,7 +4049,7 @@ def menu():
 
         quest_database.give_quest()
             
-        if NAME_ENTRY.collidepoint((mx,my)) and click:
+        if NAME_ENTRY_MENU.collidepoint((mx,my)) and click:
             if game.name_box_active:
                 game.name_box_active = False
             else:
