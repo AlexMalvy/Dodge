@@ -430,9 +430,13 @@ FLIGHT_CD_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_do
 SOAR_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("dragon_skin", "soar.png"))),(40, 40))
 SOAR_CD_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("dragon_skin", "soar_cd.png"))),(40, 40))
 
-# Shield Up (Dragon)
+SOAR_FX = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("dragon_skin", "soar_fx.png"))), (30,30))
+
+# Roar (Dragon)
 ROAR_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("dragon_skin", "roar.png"))),(40, 40))
 ROAR_CD_IMG = pygame.transform.scale(pygame.image.load(os.path.join("Assets_dodge", os.path.join("dragon_skin", "roar_cd.png"))),(40, 40))
+
+ROAR_FX = pygame.image.load(os.path.join("Assets_dodge", os.path.join("dragon_skin", "roar_fx.png")))
 
 
 ## Game img / VFX
@@ -903,41 +907,19 @@ class quest_database():
 def play_animations():
     temp_list = []
     for anim in animations.list:
+        # General
+        ## In game
         if anim["type"] == "dmg":
             if anim["current_frame"] <= anim["max_frame"]//2:
                 screen.blit(DMG_1_IMG, (anim["x"], anim["y"]))
             elif anim["current_frame"] > anim["max_frame"]//2:
                 screen.blit(DMG_2_IMG, (anim["x"], anim["y"]))
-
-        if anim["type"] == "dash":
-            if anim["current_frame"] <= anim["max_frame"]//4:
-                screen.blit(DASH_FX_1, (anim["x"], anim["y"]))
-            elif anim["current_frame"] <= anim["max_frame"]//2 and anim["current_frame"] > anim["max_frame"]//4:
-                screen.blit(DASH_FX_2, (anim["x"], anim["y"]))
-            elif anim["current_frame"] <= (anim["max_frame"]//4 * 3) and anim["current_frame"] > anim["max_frame"]//2:
-                screen.blit(DASH_FX_3, (anim["x"], anim["y"]))
-            elif anim["current_frame"] > (anim["max_frame"]//4 * 3):
-                screen.blit(DASH_FX_4, (anim["x"], anim["y"]))
-
-        if anim["type"] == "afterdash":
-            if anim["current_frame"] <= anim["max_frame"]//4:
-                screen.blit(DASH_FX_4, (anim["x"], anim["y"]))
-            elif anim["current_frame"] <= anim["max_frame"]//2 and anim["current_frame"] > anim["max_frame"]//4:
-                screen.blit(DASH_FX_3, (anim["x"], anim["y"]))
-            elif anim["current_frame"] <= (anim["max_frame"]//4 * 3) and anim["current_frame"] > anim["max_frame"]//2:
-                screen.blit(DASH_FX_2, (anim["x"], anim["y"]))
-            elif anim["current_frame"] > (anim["max_frame"]//4 * 3):
-                screen.blit(DASH_FX_1, (anim["x"], anim["y"]))
                 
         if anim["type"] == "double_jump":
             if anim["current_frame"] <= anim["max_frame"]//2:
                 screen.blit(DOUBLE_JUMP_FX_1, (anim["x"], anim["y"]))
             elif anim["current_frame"] > anim["max_frame"]//2:
                 screen.blit(DOUBLE_JUMP_FX_2, (anim["x"], anim["y"]))
-                
-        if anim["type"] == "slowfall":
-            if anim["current_frame"] <= anim["max_frame"]:
-                screen.blit(SLOWFALL_FX, (anim["x"], anim["y"]))
                 
         if anim["type"] == "stomp":
             if anim["current_frame"] <= anim["max_frame"]//3:
@@ -959,12 +941,65 @@ def play_animations():
             if anim["current_frame"] <= anim["max_frame"]:
                 screen.blit(pygame.transform.scale(COIN_IMG,(20,20)), (anim["x"], anim["y"] - anim["current_frame"] * 3))
 
+        # Out of game
+
         if anim["type"] == "quest":
             if anim["current_frame"] <= anim["max_frame"]:
                 reward_text = font.render(f"{anim['amount']}", 1, GREEN)
                 screen.blit(reward_text, (anim["x"], anim["y"] - anim["current_frame"]/5))
                 screen.blit(pygame.transform.scale(COIN_IMG,(30,30)), (anim["x"] + reward_text.get_width() + 3, anim["y"] - anim["current_frame"]/5))
 
+        # Mage
+        if anim["type"] == "dash":
+            if anim["current_frame"] <= anim["max_frame"]//4:
+                screen.blit(DASH_FX_1, (anim["x"], anim["y"]))
+            elif anim["current_frame"] <= anim["max_frame"]//2 and anim["current_frame"] > anim["max_frame"]//4:
+                screen.blit(DASH_FX_2, (anim["x"], anim["y"]))
+            elif anim["current_frame"] <= (anim["max_frame"]//4 * 3) and anim["current_frame"] > anim["max_frame"]//2:
+                screen.blit(DASH_FX_3, (anim["x"], anim["y"]))
+            elif anim["current_frame"] > (anim["max_frame"]//4 * 3):
+                screen.blit(DASH_FX_4, (anim["x"], anim["y"]))
+
+        if anim["type"] == "afterdash":
+            if anim["current_frame"] <= anim["max_frame"]//4:
+                screen.blit(DASH_FX_4, (anim["x"], anim["y"]))
+            elif anim["current_frame"] <= anim["max_frame"]//2 and anim["current_frame"] > anim["max_frame"]//4:
+                screen.blit(DASH_FX_3, (anim["x"], anim["y"]))
+            elif anim["current_frame"] <= (anim["max_frame"]//4 * 3) and anim["current_frame"] > anim["max_frame"]//2:
+                screen.blit(DASH_FX_2, (anim["x"], anim["y"]))
+            elif anim["current_frame"] > (anim["max_frame"]//4 * 3):
+                screen.blit(DASH_FX_1, (anim["x"], anim["y"]))
+                
+        if anim["type"] == "slowfall":
+            if anim["current_frame"] <= anim["max_frame"]:
+                screen.blit(SLOWFALL_FX, (anim["x"], anim["y"]))
+
+        # Dragon
+        if anim["type"] == "roar":
+            roar_surface = pygame.Surface((player.roar_radius * 2, player.roar_radius * 2))
+            roar_surface.fill(BLACK)
+            roar_surface.set_colorkey(BLACK)
+            if anim["current_frame"] <= anim["max_frame"]//2:
+                current_radius = player.roar_radius * (anim["current_frame"] / anim["max_frame"] * 2) * 2
+            else:
+                current_radius = player.roar_radius * 2
+            if anim["current_frame"] > anim["max_frame"]//3 and anim["current_frame"] <= anim["max_frame"]:
+                fade_time = anim["max_frame"]//3
+                alpha_value = 255 * (1 / (anim["current_frame"] - fade_time))
+            else:
+                alpha_value = 255
+            roar_surface.blit(pygame.transform.scale(ROAR_FX, (current_radius, current_radius)), (0,0))
+            roar_surface.set_alpha(alpha_value)
+            screen.blit(roar_surface, (anim["x"] - current_radius//2, anim["y"] - current_radius//2))
+
+        if anim["type"] == "soar":
+            if anim["current_frame"] <= anim["max_frame"]:
+                screen.blit(pygame.transform.rotate(SOAR_FX, 90), (anim["x"] - SOAR_FX.get_width()//2 - anim["current_frame"] * 3, anim["y"] - SOAR_FX.get_height()//2))
+                screen.blit(pygame.transform.rotate(SOAR_FX, 80), (anim["x"] - SOAR_FX.get_width()//2 + 10 - anim["current_frame"] * 3, anim["y"] - SOAR_FX.get_height()//2))
+
+
+
+        # Frame ticker
         anim["current_frame"] += 1
         if anim["max_frame"] <= anim["current_frame"]:
             temp_list.append(anim)
@@ -972,8 +1007,10 @@ def play_animations():
     for anim in temp_list:
         animations.list.remove(anim)
 
+    # Knight
     if player.immune and player.job == "Knight":
         screen.blit(SHIELD_UP_FX, (player.player_ch.centerx, player.player_ch.y))
+
 
 class background:
     overall_bg = BACKGROUND_IMG
@@ -1105,18 +1142,22 @@ def main_game_draw_window():
     pygame.draw.rect(screen, BLACK, DOUBLE_JUMP_EMPLACEMENT)
     if player.job == "Dragon":
         if player.endurance >= 25:
+            pygame.draw.rect(screen, BLACK, (player.player_ch.x - 11, player.player_ch.y - 1, 7, 7))
             pygame.draw.rect(screen, YELLOW, (player.player_ch.x - 10, player.player_ch.y, 5, 5))
             screen.blit(FLIGHT_IMG, (DOUBLE_JUMP_EMPLACEMENT.x + 1, DOUBLE_JUMP_EMPLACEMENT.y + 1))
             remaining_charge_text = font.render(f"1", 1, WHITE)
         if player.endurance >= 50:
+            pygame.draw.rect(screen, BLACK, (player.player_ch.x - 11, player.player_ch.y + 9, 7, 7))
             pygame.draw.rect(screen, YELLOW, (player.player_ch.x - 10, player.player_ch.y + 10, 5, 5))
             screen.blit(FLIGHT_IMG, (DOUBLE_JUMP_EMPLACEMENT.x + 1, DOUBLE_JUMP_EMPLACEMENT.y + 1))
             remaining_charge_text = font.render(f"2", 1, WHITE)
         if player.endurance >= 75:
+            pygame.draw.rect(screen, BLACK, (player.player_ch.x - 11, player.player_ch.y + 19, 7, 7))
             pygame.draw.rect(screen, YELLOW, (player.player_ch.x - 10, player.player_ch.y + 20, 5, 5))
             screen.blit(FLIGHT_IMG, (DOUBLE_JUMP_EMPLACEMENT.x + 1, DOUBLE_JUMP_EMPLACEMENT.y + 1))
             remaining_charge_text = font.render(f"3", 1, WHITE)
         if player.endurance >= 100:
+            pygame.draw.rect(screen, BLACK, (player.player_ch.x - 11, player.player_ch.y + 29, 7, 7))
             pygame.draw.rect(screen, YELLOW, (player.player_ch.x - 10, player.player_ch.y + 30, 5, 5))
             screen.blit(FLIGHT_IMG, (DOUBLE_JUMP_EMPLACEMENT.x + 1, DOUBLE_JUMP_EMPLACEMENT.y + 1))
             remaining_charge_text = font.render(f"4", 1, WHITE)
@@ -1260,11 +1301,13 @@ def main_game():
                 elif player.special_type == "Roar":
                     if time.time() - player.special_timer >= player.special_cd:
                         player.special_timer = time.time()
+                        animations.list.append({"type" : "roar", "x" : player.player_ch.centerx, "y" : player.player_ch.centery, "max_frame" : 12, "current_frame" : 0})
                         to_be_removed = []
                         for bullet in projectile.list:
                             if bullet["type"] == "basic" or bullet["type"] == "ground":
                                 dist_to_player = int(math.dist((player.player_ch.x, player.player_ch.y),(bullet["rect"].x, bullet["rect"].y)))
                                 if dist_to_player <= player.roar_radius:
+                                    animations.list.append({"type" : "dmg", "x" : bullet["rect"].x - 10, "y" :  bullet["rect"].y - 10, "max_frame" : 14, "current_frame" : 0})
                                     to_be_removed.append(bullet)
                         if len(to_be_removed) > 0:
                             for bullet in to_be_removed:
@@ -1288,6 +1331,7 @@ def main_game():
                     player.grounded_timer = 0
                     player.jump_velocity = player.jump_power
                     player.endurance -= 25
+                    animations.list.append({"type" : "double_jump", "x" : player.player_ch.x, "y" : player.player_ch.centery, "max_frame" : 8, "current_frame" : 0})
                 elif player.job != "Dragon":
                     player.jump_velocity = player.jump_power * player.double_jump_multiplier
                     player.double_jump = False
@@ -1358,6 +1402,7 @@ def main_game():
                         player.dash_timer = time.time()
                         player.ground = False
                         player.jump_velocity = player.dash_power
+                        animations.list.append({"type" : "soar", "x" : player.player_ch.centerx, "y" : player.player_ch.bottom, "max_frame" : 8, "current_frame" : 0})
 
             # Knight Dash logic (need to fix endless dash)
             if player.charge:
