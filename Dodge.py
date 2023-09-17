@@ -609,13 +609,13 @@ def switch_job():
         player.special_cd = 10
     if player.job == "Dragon":
         player.dash_type = "Soar"
-        player.dash_desc_1 = "desc_1"
-        player.dash_desc_2 = "desc_2"
+        player.dash_desc_1 = "Quickly ascend to"
+        player.dash_desc_2 = "the celling."
         player.dash_cd = 5
         player.dash_power = 30
         player.special_type = "Roar"
-        player.special_desc_1 = "desc_1"
-        player.special_desc_2 = "desc_2"
+        player.special_desc_1 = "Destroy all nearby"
+        player.special_desc_2 = "projectiles."
         player.special_cd = 12
 
 def generate_projectile_basic():
@@ -3161,11 +3161,15 @@ class ranking:
     #
     knight = []
     knight_max_page = 1
+    #
+    dragon = []
+    dragon_max_page = 1
 
     def update(self):
         self.update_all()
         self.update_mage()
         self.update_knight()
+        self.update_dragon()
         
 
     def update_all(self):
@@ -3208,6 +3212,24 @@ class ranking:
             number_of_ranked = len(temp_knight)
         self.knight_max_page = len(self.knight)//10 + 1
 
+    def update_dragon(self):
+        temp_dragon = []
+        for each in self.all:
+            if each["best_time_dragon"] > 0:
+                temp_dragon.append(each)
+        self.dragon = []
+        number_of_ranked = len(temp_dragon)
+        currently_selected = temp_dragon[0]
+        while number_of_ranked > 0:
+            currently_selected = temp_dragon[0]
+            for entry in temp_dragon:
+                if entry["best_time_dragon"] > currently_selected["best_time_dragon"]:
+                    currently_selected = entry
+            self.dragon.append(currently_selected)
+            temp_dragon.remove(currently_selected)
+            number_of_ranked = len(temp_dragon)
+        self.dragon_max_page = len(self.dragon)//10 + 1
+
 ranking = ranking()
 
 
@@ -3235,12 +3257,12 @@ def ranking_draw_window(job,page):
     keybind_text = font.render("Knight", 1, WHITE)
     screen.blit(keybind_text, (RK_JOB2_BUTTON.centerx - keybind_text.get_width()//2, RK_JOB2_BUTTON.centery - keybind_text.get_height()//2))
     
-    if job == "Job3":
+    if job == "Dragon":
         pygame.draw.rect(screen, YELLOW, RK_JOB3_BUTTON)
     else:
         pygame.draw.rect(screen, RED, RK_JOB3_BUTTON)
     screen.blit(pygame.transform.scale(PANEL_IMG, (RK_JOB3_BUTTON.width - 2, RK_JOB3_BUTTON.height - 2)), (RK_JOB3_BUTTON.x + 1, RK_JOB3_BUTTON.y + 1))
-    keybind_text = font.render("Job3", 1, WHITE)
+    keybind_text = font.render("Dragon", 1, WHITE)
     screen.blit(keybind_text, (RK_JOB3_BUTTON.centerx - keybind_text.get_width()//2, RK_JOB3_BUTTON.centery - keybind_text.get_height()//2))
     
     if job == "Job4":
@@ -3344,6 +3366,8 @@ def ranking_draw_window(job,page):
                 screen.blit(pygame.transform.scale(get_skin_img(f"{entry['current_mage_skin']}"),(30,30)), (RK_COLUMN_SKIN.x + 10, RK_COLUMN_SKIN.y + 5 + offset * 40))
             elif f"{entry['job']}" == "Knight":
                 screen.blit(pygame.transform.scale(get_skin_img(f"{entry['current_knight_skin']}"),(30,30)), (RK_COLUMN_SKIN.x + 10, RK_COLUMN_SKIN.y + 5 + offset * 40))
+            elif f"{entry['job']}" == "Dragon":
+                screen.blit(pygame.transform.scale(get_skin_img(f"{entry['current_dragon_skin']}"),(30,30)), (RK_COLUMN_SKIN.x + 10, RK_COLUMN_SKIN.y + 5 + offset * 40))
             else:
                 screen.blit(pygame.transform.scale(get_skin_img(f"{entry['current_mage_skin']}"),(30,30)), (RK_COLUMN_SKIN.x + 10, RK_COLUMN_SKIN.y + 5 + offset * 40))
             offset += 1
@@ -3365,6 +3389,15 @@ def ranking_draw_window(job,page):
             screen.blit(time_text, (RK_COLUMN_TIME.centerx - time_text.get_width()//2, RK_COLUMN_TIME.y + 10 + offset * 40))
             screen.blit(pygame.transform.scale(get_skin_img(f"{entry['current_knight_skin']}"),(30,30)), (RK_COLUMN_SKIN.x + 10, RK_COLUMN_SKIN.y + 5 + offset * 40))
             offset += 1
+    if job == "Dragon":
+        offset = 0
+        for entry in ranking.knight:
+            name_text = font.render(f"{entry['name']}", 1, WHITE)
+            screen.blit(name_text, (RK_COLUMN_NAME.centerx - name_text.get_width()//2, RK_COLUMN_NAME.y + 10 + offset * 40))
+            time_text = font.render(f"{entry['best_time_dragon']:.2f}", 1, WHITE)
+            screen.blit(time_text, (RK_COLUMN_TIME.centerx - time_text.get_width()//2, RK_COLUMN_TIME.y + 10 + offset * 40))
+            screen.blit(pygame.transform.scale(get_skin_img(f"{entry['current_dragon_skin']}"),(30,30)), (RK_COLUMN_SKIN.x + 10, RK_COLUMN_SKIN.y + 5 + offset * 40))
+            offset += 1
 
 
     pygame.draw.rect(screen, RED, RK_STATS_RECT)
@@ -3379,26 +3412,20 @@ def ranking_draw_window(job,page):
         best_time = font.render(f"Best time : {player.best_time_mage:.2f}s", 1, WHITE)
     elif job == "Knight":
         best_time = font.render(f"Best time : {player.best_time_knight:.2f}s", 1, WHITE)
+    elif job == "Dragon":
+        best_time = font.render(f"Best time : {player.best_time_dragon:.2f}s", 1, WHITE)
     elif job == "All":
         best_time = font.render(f"Best time : {game.best_time_ever:.2f}s", 1, WHITE)
     else:
-        best_time = font.render(f"Best time : None", 1, WHITE)
+        best_time = font.render(f"Unranked", 1, WHITE)
     screen.blit(best_time, (RK_STATS_RECT.x + 10, RK_STATS_RECT.y + 100))
 
     # Number of Run/ Gold coins collected (To be changed)
-    active_text = font.render(f"Active : {player.special_type}", 1, WHITE)
+    active_text = font.render(f"Placeholder", 1, WHITE)
     screen.blit(active_text, (RK_STATS_RECT.x + 10, RK_STATS_RECT.y + 140))
-    active_desc = small_font.render(f"{player.special_desc_1}", 1, WHITE)
-    screen.blit(active_desc, (RK_STATS_RECT.x + 10, RK_STATS_RECT.y + 170))
-    active_desc = small_font.render(f"{player.special_desc_2}", 1, WHITE)
-    screen.blit(active_desc, (RK_STATS_RECT.x + 10, RK_STATS_RECT.y + 190))
 
-    dash_text = font.render(f"Dash : {player.dash_type}", 1, WHITE)
+    dash_text = font.render(f"Placeholder", 1, WHITE)
     screen.blit(dash_text, (RK_STATS_RECT.x + 10, RK_STATS_RECT.y + 230))
-    active_desc = small_font.render(f"{player.dash_desc_1}", 1, WHITE)
-    screen.blit(active_desc, (RK_STATS_RECT.x + 10, RK_STATS_RECT.y + 260))
-    active_desc = small_font.render(f"{player.dash_desc_2}", 1, WHITE)
-    screen.blit(active_desc, (RK_STATS_RECT.x + 10, RK_STATS_RECT.y + 280))
 
 
     page_text = font.render(f"{page}", 1, WHITE)
