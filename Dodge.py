@@ -1839,9 +1839,8 @@ def game_over():
                     restart_game()
                     run = False
                     game.main_on = False
-                if event.key == K_r:
+                if event.key == K_r or event.key == K_SPACE:
                     game.restart = True
-                    run = False
 
         game_over_draw_window()
         
@@ -1966,9 +1965,48 @@ def job_select_draw_window():
 
     pygame.display.update()
 
+class job_selection_screen():
+    job_list = ["Mage", "Knight", "Dragon"]
+    job_index = 0
+
+    def update_job(self):
+        if self.job_index == 0:
+            self.switch_to_mage()
+        elif self.job_index == 1:
+            self.switch_to_knight()
+        elif self.job_index == 2:
+            self.switch_to_dragon()
+        else:
+            self.switch_to_mage()
+
+    def switch_to_mage(self):
+        player.job = "Mage"
+        switch_job()
+        for entry in game.ranking_list:
+            if entry["name"] == game.player_name:
+                game.best_time = entry["best_time_mage"]
+
+    def switch_to_knight(self):
+        player.job = "Knight"
+        switch_job()
+        for entry in game.ranking_list:
+            if entry["name"] == game.player_name:
+                game.best_time = entry["best_time_knight"]
+
+    def switch_to_dragon(self):
+        player.job = "Dragon"
+        switch_job()
+        for entry in game.ranking_list:
+            if entry["name"] == game.player_name:
+                game.best_time = entry["best_time_dragon"]
+
+job_selection_screen = job_selection_screen()
+
+
 def job_select():
     run = True
     click = False
+    play = False
     while run:
         clock.tick(60)
         mx, my = pygame.mouse.get_pos()
@@ -1976,23 +2014,14 @@ def job_select():
         quest_database.update()
 
         if MAGE_ICON_EMPLACEMENT.collidepoint((mx,my)) and click:
-            player.job = "Mage"
-            switch_job()
-            for entry in game.ranking_list:
-                if entry["name"] == game.player_name:
-                    game.best_time = entry["best_time_mage"]
+            job_selection_screen.job_index = 0
+            job_selection_screen.update_job()
         if KNIGHT_ICON_EMPLACEMENT.collidepoint((mx,my)) and click:
-            player.job = "Knight"
-            switch_job()
-            for entry in game.ranking_list:
-                if entry["name"] == game.player_name:
-                    game.best_time = entry["best_time_knight"]
+            job_selection_screen.job_index = 1
+            job_selection_screen.update_job()
         if JOB3_ICON_EMPLACEMENT.collidepoint((mx,my)) and click:
-            player.job = "Dragon"
-            switch_job()
-            for entry in game.ranking_list:
-                if entry["name"] == game.player_name:
-                    game.best_time = entry["best_time_dragon"]
+            job_selection_screen.job_index = 2
+            job_selection_screen.update_job()
 
         if Q1_EMPLACEMENT.collidepoint((mx,my)) and click:
             key_list = list(player.quest_dic)
@@ -2004,7 +2033,7 @@ def job_select():
             key_list = list(player.quest_dic)
             del player.quest_dic[key_list[2]]
             
-        if PLAY_JOB_BUTTON.collidepoint((mx,my)) and click:
+        if (PLAY_JOB_BUTTON.collidepoint((mx,my)) and click) or play:
             main_game()
             for entry in game.ranking_list:
                 if entry["name"] == game.player_name:
@@ -2027,6 +2056,15 @@ def job_select():
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     run = False
+                if event.key == K_SPACE:
+                    play = True
+                if event.key == settings.go_left_key and job_selection_screen.job_index > 0:
+                    job_selection_screen.job_index -= 1
+                    job_selection_screen.update_job()
+                if event.key == settings.go_right_key and job_selection_screen.job_index < len(job_selection_screen.job_list) - 1:
+                    job_selection_screen.job_index += 1
+                    job_selection_screen.update_job()
+
 
         job_select_draw_window()
 
@@ -4604,7 +4642,8 @@ def menu():
                     elif event.key == K_RETURN:
                         game.name_box_active = False
                     else:
-                        game.player_name += event.unicode
+                        if len(game.player_name) < 14:
+                            game.player_name += event.unicode
                 elif event.key == K_RETURN:
                     game.name_box_active = True
 
